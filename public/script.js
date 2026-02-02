@@ -29,6 +29,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Generate Content via Gemini REST API
+    async function callGeminiAPI(prompt) {
+        const apiKey = localStorage.getItem('gemini_api_key');
+        if (!apiKey) {
+            throw new Error('Please save your Google Gemini API Key in the Settings tab first.');
+        }
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }]
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error?.message || 'Failed to generate content');
+        }
+
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+    }
+
+    // Save API Key
+    const saveKeyBtn = document.getElementById('save-key-btn');
+    const apiKeyInput = document.getElementById('api-key-input');
+
+    // Load existing key
+    if (localStorage.getItem('gemini_api_key')) {
+        apiKeyInput.value = localStorage.getItem('gemini_api_key');
+    }
+
+    if (saveKeyBtn) {
+        saveKeyBtn.addEventListener('click', () => {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('gemini_api_key', key);
+                alert('API Key saved successfully!');
+            } else {
+                alert('Please enter a valid API Key.');
+            }
+        });
+    }
+
     // Handle Itinerary Generation
     itineraryForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -36,26 +84,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const loader = btn.querySelector('.loader');
         const btnText = btn.querySelector('.btn-text');
 
-        const data = {
-            destination: document.getElementById('destination').value,
-            days: parseInt(document.getElementById('days').value),
-            nights: parseInt(document.getElementById('nights').value),
-            description: document.getElementById('preferences').value
-        };
+        const dest = document.getElementById('destination').value;
+        const days = document.getElementById('days').value;
+        const nights = document.getElementById('nights').value;
+        const prefs = document.getElementById('preferences').value;
+
+        const prompt = `Plan a ${days}-day, ${nights}-night trip to ${dest}. Preferences: ${prefs}. Provide a detailed day-by-day itinerary with activities and dining. Format nicely with Markdown.`;
 
         setLoading(true, btn, loader, btnText);
 
         try {
-            const response = await fetch('/api/generate-itinerary', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) throw new Error('Failed to generate itinerary');
-
-            const result = await response.json();
-            showResults(result.itinerary);
+            const result = await callGeminiAPI(prompt);
+            showResults(result);
         } catch (error) {
             alert('Error: ' + error.message);
         } finally {
@@ -70,25 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const loader = btn.querySelector('.loader');
         const btnText = btn.querySelector('.btn-text');
 
-        const data = {
-            content_type: document.getElementById('content-type').value,
-            destination: document.getElementById('content-destination').value,
-            extra_info: document.getElementById('content-extra').value
-        };
+        const type = document.getElementById('content-type').value;
+        const dest = document.getElementById('content-destination').value;
+        const extra = document.getElementById('content-extra').value;
+
+        const prompt = `Write a ${type} for ${dest}. Focus on: ${extra}. Make it engaging and useful for travelers. Format nicely with Markdown.`;
 
         setLoading(true, btn, loader, btnText);
 
         try {
-            const response = await fetch('/api/generate-content', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) throw new Error('Failed to generate content');
-
-            const result = await response.json();
-            showResults(result.content);
+            const result = await callGeminiAPI(prompt);
+            showResults(result);
         } catch (error) {
             alert('Error: ' + error.message);
         } finally {

@@ -166,6 +166,7 @@
             <div class="tabs">
                 <button class="tab-btn active" data-tab="itinerary">🗺️ Itinerary Generator</button>
                 <button class="tab-btn" data-tab="content">✍️ AI Content Hub</button>
+                <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
             </div>
 
             <div class="tab-content active" id="itinerary-tab">
@@ -227,6 +228,23 @@
                             <span class="loader hidden"></span>
                         </button>
                     </form>
+                </div>
+            </div>
+
+            <div class="tab-content" id="settings-tab">
+                <div class="card">
+                    <div class="search-field">
+                        <label>Google Gemini API Key</label>
+                        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">
+                            Required for AI features to work on GitHub Pages. Custom itineraries are generated directly
+                            in your browser.
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank"
+                                style="color: var(--primary);">Get a key here</a>.
+                        </p>
+                        <input type="password" id="api-key-input"
+                            placeholder="Paste your API Key here (starts with AIza...)" style="margin-bottom: 10px;">
+                        <button id="save-key-btn" class="nav-cta" style="width: 100%;">Save Key</button>
+                    </div>
                 </div>
             </div>
         </section>
