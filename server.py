@@ -53,9 +53,9 @@ async def api_content(request: ContentRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Serve static files from the 'public' directory
-if os.path.exists("public"):
-    app.mount("/", StaticFiles(directory="public", html=True), name="static")
+# Serve static files from the 'docs' directory
+if os.path.exists("docs"):
+    app.mount("/", StaticFiles(directory="docs", html=True), name="static")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
