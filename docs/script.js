@@ -31,7 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Generate Content via Gemini REST API
     async function callGeminiAPI(prompt) {
-        const apiKey = localStorage.getItem('gemini_api_key');
+        let apiKey = localStorage.getItem('gemini_api_key');
+
+        // Fallback for demo purposes
+        if (!apiKey) {
+            apiKey = "AIzaSyBljKqmqUdhKOUsKVkcs10JKOR56r4cK4E";
+        }
+
         if (!apiKey) {
             throw new Error('Please save your Google Gemini API Key in the Settings tab first.');
         }
