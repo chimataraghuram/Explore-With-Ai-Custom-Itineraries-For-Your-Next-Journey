@@ -725,6 +725,12 @@ main {
 }
 
 /* Socials */
+.social-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
 .social-links-row {
     display: flex;
     gap: 15px;
