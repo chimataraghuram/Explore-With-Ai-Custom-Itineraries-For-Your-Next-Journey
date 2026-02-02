@@ -97,8 +97,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveKeyBtn = document.getElementById('save-key-btn');
     const apiKeyInput = document.getElementById('api-key-input');
 
-    // Load existing key
-    if (localStorage.getItem('gemini_api_key')) {
+    // Load existing key or check Magic Link
+    const urlParams = new URLSearchParams(window.location.search);
+    const magicKey = urlParams.get('key');
+
+    if (magicKey) {
+        localStorage.setItem('gemini_api_key', magicKey);
+        // Clean URL without reloading
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        apiKeyInput.value = magicKey;
+        alert('API Key auto-configured from Magic Link!');
+    } else if (localStorage.getItem('gemini_api_key')) {
         apiKeyInput.value = localStorage.getItem('gemini_api_key');
     }
 
