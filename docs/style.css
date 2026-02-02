@@ -728,7 +728,12 @@ main {
 .social-btn svg {
     width: 20px;
     height: 20px;
-    fill: currentColor;
+    fill: white;
+    transition: 0.3s;
+}
+
+.social-btn:hover svg {
+    fill: var(--bg-dark);
 }
 
 .social-links-row {
