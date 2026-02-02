@@ -56,6 +56,43 @@ document.addEventListener('DOMContentLoaded', () => {
         return data.candidates[0].content.parts[0].text;
     }
 
+    // Handle Hero Search
+    const heroSearchBtn = document.getElementById('hero-search-btn');
+    if (heroSearchBtn) {
+        heroSearchBtn.addEventListener('click', () => {
+            const dest = document.getElementById('hero-dest').value;
+            const vibe = document.getElementById('hero-vibe').value;
+            const when = document.getElementById('hero-when').value;
+
+            // Scroll to Generator
+            const generatorSection = document.getElementById('generator');
+            generatorSection.scrollIntoView({ behavior: 'smooth' });
+
+            // Activate Itinerary Tab
+            const itineraryTabBtn = document.querySelector('[data-tab="itinerary"]');
+            itineraryTabBtn.click();
+
+            // Pre-fill Form
+            if (dest) document.getElementById('destination').value = dest;
+
+            let preferences = [];
+            if (vibe) preferences.push(`Vibe: ${vibe}`);
+            if (when) preferences.push(`When: ${when}`);
+
+            if (preferences.length > 0) {
+                const prefsInput = document.getElementById('preferences');
+                const existingPrefs = prefsInput.value;
+                const newPrefs = preferences.join(', ');
+
+                if (existingPrefs) {
+                    prefsInput.value = `${existingPrefs}, ${newPrefs}`;
+                } else {
+                    prefsInput.value = newPrefs;
+                }
+            }
+        });
+    }
+
     // Save API Key
     const saveKeyBtn = document.getElementById('save-key-btn');
     const apiKeyInput = document.getElementById('api-key-input');

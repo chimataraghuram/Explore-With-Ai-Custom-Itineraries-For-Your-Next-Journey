@@ -72,11 +72,12 @@
         <div class="search-container glass-panel reveal active">
             <div class="search-field">
                 <label>Destination</label>
-                <input type="text" placeholder="Where next?">
+                <input type="text" id="hero-dest" placeholder="Where next?">
             </div>
             <div class="search-field">
                 <label>Vibe</label>
-                <select>
+                <select id="hero-vibe">
+                    <option value="">Select Vibe</option>
                     <option>Wild Jungle</option>
                     <option>Alpine Soul</option>
                     <option>Hidden Beaches</option>
@@ -85,13 +86,14 @@
             </div>
             <div class="search-field">
                 <label>When</label>
-                <select>
+                <select id="hero-when">
+                    <option value="">Select Time</option>
                     <option>Now</option>
                     <option>Next Week</option>
                     <option>Flexible</option>
                 </select>
             </div>
-            <button class="search-btn">Find Magic</button>
+            <button class="search-btn" id="hero-search-btn">Find Magic</button>
         </div>
     </div>
 
