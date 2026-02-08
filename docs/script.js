@@ -175,6 +175,18 @@ STRICT RULES:
 - Add local transport suggestions
 - Add estimated daily cost range
 
+COST BREAKDOWN (at the end):
+Estimate total trip cost for ${dest}:
+- Budget hotel per night
+- Food per day (breakfast, lunch, dinner)
+- Local transport per day
+- Activity tickets & entry fees
+
+Provide:
+- Estimated per person cost
+- Estimated total cost for ${days} days
+- Cost saving tips (3-5 practical tips)
+
 Format the output beautifully with proper Markdown formatting.`;
 
         setLoading(true, btn, loader, btnText);
