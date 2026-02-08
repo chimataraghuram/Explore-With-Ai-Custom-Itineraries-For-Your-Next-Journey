@@ -174,6 +174,9 @@ STRICT RULES:
 - Include hidden local experiences
 - Add local transport suggestions
 - Add estimated daily cost range
+- For each place mentioned, include Google Maps link:
+  Format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
+  Example: [Eiffel Tower](https://www.google.com/maps/search/?api=1&query=Eiffel+Tower+Paris)
 
 COST BREAKDOWN (at the end):
 Estimate total trip cost for ${dest}:
