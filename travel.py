@@ -19,25 +19,45 @@ def generate_itinerary(destination, days, nights, description):
     generation_config=generation_config
   )
 
+  # Enhanced AI Travel Planner Prompt
+  enhanced_prompt = f"""You are an intelligent AI travel planner.
+
+Generate a detailed itinerary for {destination}.
+
+Travel Duration: {days} days and {nights} nights
+Travel Style/Preferences: {description}
+
+STRICT RULES:
+- Structure output day-wise
+- Optimize locations geographically
+- Adjust activities based on Travel Style:
+   • Adventure → trekking, water sports, hiking
+   • Relax → scenic spots, cafes, sunset points
+   • Romantic → private experiences, cozy dining
+   • Foodie → local markets, signature dishes
+   • History → monuments, museums, heritage walks
+- Consider weather in the travel month
+- Avoid generic descriptions
+- Include hidden local experiences
+- Add local transport suggestions
+- Add estimated daily cost range
+
+Format the output beautifully with proper Markdown formatting."""
+
   #start a new chat session with the model
   chat_session = model.start_chat(
   history = [
     {
       "role": "user",
       "parts": [
-        f"""write me a travel itinerary to {destination} for {days} days
-        and {nights} nights including day-wise activities, accommodation, 
-        local food, transport, tips, and tailored to {description}""",
+        enhanced_prompt,
       ],
     },
   ]
   )
 
   #send the message to the chat and get the response
-  response = chat_session.send_message(
-  f"""Create a detailed travel itinerart for {days} days 
-  and {nights} nights in {destination} tailored to {description}"""
-  )
+  response = chat_session.send_message(enhanced_prompt)
 
   return response.text
 

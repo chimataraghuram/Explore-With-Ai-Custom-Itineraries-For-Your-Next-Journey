@@ -92,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dest) document.getElementById('destination').value = dest;
 
             let preferences = [];
-            if (vibe) preferences.push(`Vibe: ${vibe}`);
-            if (when) preferences.push(`When: ${when}`);
+            if (vibe) preferences.push(`Travel Style: ${vibe}`);
+            if (when) preferences.push(`Travel Month: ${when}`);
 
             if (preferences.length > 0) {
                 const prefsInput = document.getElementById('preferences');
@@ -152,7 +152,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const nights = document.getElementById('nights').value;
         const prefs = document.getElementById('preferences').value;
 
-        const prompt = `Plan a ${days}-day, ${nights}-night trip to ${dest}. Preferences: ${prefs}. Provide a detailed day-by-day itinerary with activities and dining. Format nicely with Markdown.`;
+        // Enhanced AI Travel Planner Prompt
+        const prompt = `You are an intelligent AI travel planner.
+
+Generate a detailed itinerary for ${dest}.
+
+Travel Duration: ${days} days and ${nights} nights
+Travel Style/Preferences: ${prefs}
+
+STRICT RULES:
+- Structure output day-wise
+- Optimize locations geographically
+- Adjust activities based on Travel Style:
+   • Adventure → trekking, water sports, hiking
+   • Relax → scenic spots, cafes, sunset points
+   • Romantic → private experiences, cozy dining
+   • Foodie → local markets, signature dishes
+   • History → monuments, museums, heritage walks
+- Consider weather in the travel month
+- Avoid generic descriptions
+- Include hidden local experiences
+- Add local transport suggestions
+- Add estimated daily cost range
+
+Format the output beautifully with proper Markdown formatting.`;
 
         setLoading(true, btn, loader, btnText);
 
