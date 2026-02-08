@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
     const itineraryForm = document.getElementById('itinerary-form');
+    const finderForm = document.getElementById('finder-form');
     const contentForm = document.getElementById('content-form');
     const resultsSection = document.getElementById('results');
     const resultsContent = document.getElementById('results-content');
@@ -218,6 +219,50 @@ Format the output beautifully with proper Markdown formatting.`;
         }
     });
 
+    // Handle Destination Finder
+    if (finderForm) {
+        finderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('find-destinations-btn');
+            const loader = btn.querySelector('.loader');
+            const btnText = btn.querySelector('.btn-text');
+
+            const month = document.getElementById('finder-month').value;
+            const style = document.getElementById('finder-style').value;
+            const budget = document.getElementById('finder-budget').value;
+
+            if (!month || !style) {
+                alert('Please select both month and travel style.');
+                return;
+            }
+
+            const prompt = `Suggest 5 destinations based on:
+- Travel Month: ${month}
+- Travel Style: ${style}
+- Budget Level: ${budget}
+
+For each destination, provide:
+1. Destination name with country
+2. Why it's perfect for ${style} travelers in ${month}
+3. Key highlights and experiences
+4. Typical ${budget} budget range
+5. Weather conditions in ${month}
+
+Format beautifully with Markdown. Make each destination compelling and specific.`;
+
+            setLoading(true, btn, loader, btnText);
+
+            try {
+                const result = await callGeminiAPI(prompt);
+                showResults(result);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                setLoading(false, btn, loader, btnText);
+            }
+        });
+    }
+
     // Handle Content Generation
     contentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -257,6 +302,8 @@ Format the output beautifully with proper Markdown formatting.`;
             loader.classList.add('hidden');
             if (btn.id === 'generate-itinerary-btn') {
                 btnText.textContent = 'Craft My Adventure';
+            } else if (btn.id === 'find-destinations-btn') {
+                btnText.textContent = 'Find Perfect Destinations';
             } else if (btn.id === 'modify-btn') {
                 btnText.textContent = 'Apply Changes';
             } else {
