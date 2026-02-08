@@ -187,6 +187,20 @@ Provide:
 - Estimated total cost for ${days} days
 - Cost saving tips (3-5 practical tips)
 
+PACKING CHECKLIST:
+Create a packing checklist for ${dest} in the travel month.
+
+Consider:
+- Weather conditions
+- Planned activities
+- Trip duration (${days} days)
+
+Organize by:
+- Clothing (weather-appropriate)
+- Essentials (toiletries, medications, etc.)
+- Tech (chargers, adapters, etc.)
+- Documents (passport, tickets, insurance, etc.)
+
 Format the output beautifully with proper Markdown formatting.`;
 
         setLoading(true, btn, loader, btnText);
