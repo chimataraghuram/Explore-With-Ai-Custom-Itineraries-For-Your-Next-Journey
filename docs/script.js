@@ -227,6 +227,9 @@ Format the output beautifully with proper Markdown formatting.`;
     });
 
     // Helper functions
+    let currentItinerary = ''; // Store current itinerary for modifications
+    let currentContext = {}; // Store destination, days, nights, prefs
+
     function setLoading(isLoading, btn, loader, btnText) {
         if (isLoading) {
             btn.disabled = true;
@@ -235,14 +238,75 @@ Format the output beautifully with proper Markdown formatting.`;
         } else {
             btn.disabled = false;
             loader.classList.add('hidden');
-            btnText.textContent = btn.id === 'generate-itinerary-btn' ? 'Generate My Itinerary' : 'Generate Engaging Content';
+            if (btn.id === 'generate-itinerary-btn') {
+                btnText.textContent = 'Craft My Adventure';
+            } else if (btn.id === 'modify-btn') {
+                btnText.textContent = 'Apply Changes';
+            } else {
+                btnText.textContent = 'Generate Intelligence';
+            }
         }
     }
 
     function showResults(content) {
-        resultsContent.textContent = content; // Using textContent to preserve formatting or we could use a MD library
+        currentItinerary = content; // Store for modifications
+        resultsContent.textContent = content;
         resultsSection.classList.remove('hidden');
+
+        // Show modification panel
+        const modPanel = document.getElementById('modification-panel');
+        if (modPanel) {
+            modPanel.style.display = 'block';
+        }
+
         resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Handle Modification Requests
+    const modificationForm = document.getElementById('modification-form');
+    if (modificationForm) {
+        modificationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('modify-btn');
+            const loader = btn.querySelector('.loader');
+            const btnText = btn.querySelector('.btn-text');
+            const userRequest = document.getElementById('modification-input').value;
+
+            if (!userRequest.trim()) {
+                alert('Please enter a modification request.');
+                return;
+            }
+
+            if (!currentItinerary) {
+                alert('Please generate an itinerary first.');
+                return;
+            }
+
+            // Modification prompt
+            const modPrompt = `Modify the existing itinerary.
+
+User request: "${userRequest}"
+
+Current Itinerary:
+${currentItinerary}
+
+Keep structure same.
+Only adjust relevant parts.
+Maintain travel optimization.
+Format beautifully with Markdown.`;
+
+            setLoading(true, btn, loader, btnText);
+
+            try {
+                const result = await callGeminiAPI(modPrompt);
+                showResults(result);
+                document.getElementById('modification-input').value = ''; // Clear input
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                setLoading(false, btn, loader, btnText);
+            }
+        });
     }
 
     // Copy to clipboard

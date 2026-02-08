@@ -270,6 +270,25 @@
                         Data</button>
                 </div>
                 <div id="results-content"></div>
+
+                <!-- Modification Chat Interface -->
+                <div id="modification-panel" class="glass-panel"
+                    style="margin-top: 40px; padding: 25px; display: none;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">✨ Modify Your Itinerary</h4>
+                    <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 15px;">Request changes without regenerating
+                        the entire plan!</p>
+                    <form id="modification-form">
+                        <div class="search-field">
+                            <textarea id="modification-input"
+                                style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; color: white; min-height: 80px; width: 100%;"
+                                placeholder="E.g., 'Add more foodie spots on Day 2' or 'Replace museum with outdoor activity'"></textarea>
+                        </div>
+                        <button type="submit" class="primary-btn" id="modify-btn" style="margin-top: 15px;">
+                            <span class="btn-text">Apply Changes</span>
+                            <span class="loader hidden"></span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </section>
     </main>
