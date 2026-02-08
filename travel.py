@@ -27,6 +27,13 @@ Generate a detailed itinerary for {destination}.
 Travel Duration: {days} days and {nights} nights
 Travel Style/Preferences: {description}
 
+FIRST ANALYZE:
+- Season in {destination} during the travel month
+- Tourist crowd level in the travel month (peak/moderate/low season)
+- Logical grouping of locations by area/district
+
+Then use this analysis to generate an optimized itinerary.
+
 STRICT RULES:
 - Structure output day-wise
 - Optimize locations geographically
