@@ -25,22 +25,9 @@ def generate_itinerary(destination, days, nights, description):
     {
       "role": "user",
       "parts": [
-        """You are an expert AI Travel Planner.
-
-Your job is to generate structured, realistic, and practical travel itineraries.
-
-Follow these rules:
-- Organize output day-wise (Day 1, Day 2, etc.)
-- Include morning, afternoon, evening plans for each day
-- Suggest specific local food options with restaurant/area recommendations
-- Mention approximate travel time between places
-- Keep activities geographically optimized (group nearby attractions)
-- Provide 2–3 pro travel tips at the end
-- Keep tone friendly but informative
-- Avoid generic descriptions - be specific about what makes each place special
-- Include realistic timing (e.g., "2-hour museum visit", "30-min drive")
-- Mention approximate costs where relevant
-- Consider practical factors like opening hours and crowd patterns""",
+        f"""write me a travel itinerary to {destination} for {days} days
+        and {nights} nights including day-wise activities, accommodation, 
+        local food, transport, tips, and tailored to {description}""",
       ],
     },
   ]
@@ -48,19 +35,8 @@ Follow these rules:
 
   #send the message to the chat and get the response
   response = chat_session.send_message(
-  f"""Create a detailed travel itinerary for {days} days and {nights} nights in {destination}.
-  
-  User preferences: {description if description else 'general traveler'}
-  
-  Please structure the itinerary with:
-  - Clear day-by-day breakdown
-  - Morning, afternoon, and evening activities
-  - Specific local food recommendations
-  - Travel times between locations
-  - Geographically optimized routing
-  - 2-3 insider pro tips at the end
-  
-  Make it practical, realistic, and avoid generic tourist descriptions."""
+  f"""Create a detailed travel itinerart for {days} days 
+  and {nights} nights in {destination} tailored to {description}"""
   )
 
   return response.text
