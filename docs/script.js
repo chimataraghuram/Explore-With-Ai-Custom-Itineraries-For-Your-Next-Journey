@@ -1,0 +1,449 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const itineraryForm = document.getElementById('itinerary-form');
+    const finderForm = document.getElementById('finder-form');
+    const contentForm = document.getElementById('content-form');
+    const resultsSection = document.getElementById('results');
+    const resultsContent = document.getElementById('results-content');
+    const copyBtn = document.getElementById('copy-btn');
+
+    // Tab Switching
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+
+            // Also update nav links if needed
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                if (a.getAttribute('href') === `#${tabId}`) {
+                    a.classList.add('active');
+                } else {
+                    a.classList.remove('active');
+                }
+            });
+        });
+    });
+
+    // Generate Content via Gemini REST API
+    async function callGeminiAPI(prompt) {
+        let apiKey = localStorage.getItem('gemini_api_key');
+
+        // Fallback for demo purposes
+        if (!apiKey) {
+            apiKey = "AIzaSyBljKqmqUdhKOUsKVkcs10JKOR56r4cK4E";
+        }
+
+        if (!apiKey) {
+            throw new Error('Please save your Google Gemini API Key in the Settings tab first.');
+        }
+
+        // Using gemini-1.5-flash-latest for better availability
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }]
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                console.error("Gemini API Error:", err);
+                throw new Error(err.error?.message || `API Error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            if (!data.candidates || data.candidates.length === 0) {
+                throw new Error("No content generated. The AI might have been blocked or returned empty.");
+            }
+            return data.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            throw error; // Re-throw to be caught by the caller
+        }
+    }
+
+    // Handle Hero Search
+    const heroSearchBtn = document.getElementById('hero-search-btn');
+    if (heroSearchBtn) {
+        heroSearchBtn.addEventListener('click', () => {
+            const dest = document.getElementById('hero-dest').value;
+            const vibe = document.getElementById('hero-vibe').value;
+            const when = document.getElementById('hero-when').value;
+
+            // Scroll to Generator
+            const generatorSection = document.getElementById('generator');
+            generatorSection.scrollIntoView({ behavior: 'smooth' });
+
+            // Activate Itinerary Tab
+            const itineraryTabBtn = document.querySelector('[data-tab="itinerary"]');
+            itineraryTabBtn.click();
+
+            // Pre-fill Form
+            if (dest) document.getElementById('destination').value = dest;
+
+            let preferences = [];
+            if (vibe) preferences.push(`Travel Style: ${vibe}`);
+            if (when) preferences.push(`Travel Month: ${when}`);
+
+            if (preferences.length > 0) {
+                const prefsInput = document.getElementById('preferences');
+                const existingPrefs = prefsInput.value;
+                const newPrefs = preferences.join(', ');
+
+                if (existingPrefs) {
+                    prefsInput.value = `${existingPrefs}, ${newPrefs}`;
+                } else {
+                    prefsInput.value = newPrefs;
+                }
+            }
+        });
+    }
+
+    // Save API Key
+    const saveKeyBtn = document.getElementById('save-key-btn');
+    const apiKeyInput = document.getElementById('api-key-input');
+
+    // Load existing key or check Magic Link
+    const urlParams = new URLSearchParams(window.location.search);
+    const magicKey = urlParams.get('key');
+
+    if (magicKey) {
+        localStorage.setItem('gemini_api_key', magicKey);
+        // Clean URL without reloading
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        apiKeyInput.value = magicKey;
+        alert('API Key auto-configured from Magic Link!');
+    } else if (localStorage.getItem('gemini_api_key')) {
+        apiKeyInput.value = localStorage.getItem('gemini_api_key');
+    }
+
+    if (saveKeyBtn) {
+        saveKeyBtn.addEventListener('click', () => {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('gemini_api_key', key);
+                alert('API Key saved successfully!');
+            } else {
+                alert('Please enter a valid API Key.');
+            }
+        });
+    }
+
+    // Handle Itinerary Generation
+    itineraryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('generate-itinerary-btn');
+        const loader = btn.querySelector('.loader');
+        const btnText = btn.querySelector('.btn-text');
+
+        const dest = document.getElementById('destination').value;
+        const days = document.getElementById('days').value;
+        const nights = document.getElementById('nights').value;
+        const prefs = document.getElementById('preferences').value;
+
+        // Enhanced AI Travel Planner Prompt
+        const prompt = `You are an intelligent AI travel planner.
+
+Generate a detailed itinerary for ${dest}.
+
+Travel Duration: ${days} days and ${nights} nights
+Travel Style/Preferences: ${prefs}
+
+FIRST ANALYZE:
+- Season in ${dest} during the travel month
+- Tourist crowd level in the travel month (peak/moderate/low season)
+- Logical grouping of locations by area/district
+
+Then use this analysis to generate an optimized itinerary.
+
+STRICT RULES:
+- Structure output day-wise
+- Optimize locations geographically
+- Adjust activities based on Travel Style:
+   • Adventure → trekking, water sports, hiking
+   • Relax → scenic spots, cafes, sunset points
+   • Romantic → private experiences, cozy dining
+   • Foodie → local markets, signature dishes
+   • History → monuments, museums, heritage walks
+- Consider weather in the travel month
+- Avoid generic descriptions
+- Include hidden local experiences
+- Add local transport suggestions
+- Add estimated daily cost range
+- For each place mentioned, include Google Maps link:
+  Format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
+  Example: [Eiffel Tower](https://www.google.com/maps/search/?api=1&query=Eiffel+Tower+Paris)
+
+COST BREAKDOWN (at the end):
+Estimate total trip cost for ${dest}:
+- Budget hotel per night
+- Food per day (breakfast, lunch, dinner)
+- Local transport per day
+- Activity tickets & entry fees
+
+Provide:
+- Estimated per person cost
+- Estimated total cost for ${days} days
+- Cost saving tips (3-5 practical tips)
+
+PACKING CHECKLIST:
+Create a packing checklist for ${dest} in the travel month.
+
+Consider:
+- Weather conditions
+- Planned activities
+- Trip duration (${days} days)
+
+Organize by:
+- Clothing (weather-appropriate)
+- Essentials (toiletries, medications, etc.)
+- Tech (chargers, adapters, etc.)
+- Documents (passport, tickets, insurance, etc.)
+
+Format the output beautifully with proper Markdown formatting.`;
+
+        setLoading(true, btn, loader, btnText);
+
+        try {
+            const result = await callGeminiAPI(prompt);
+            showResults(result);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            setLoading(false, btn, loader, btnText);
+        }
+    });
+
+    // Handle Destination Finder
+    if (finderForm) {
+        finderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('find-destinations-btn');
+            const loader = btn.querySelector('.loader');
+            const btnText = btn.querySelector('.btn-text');
+
+            const month = document.getElementById('finder-month').value;
+            const style = document.getElementById('finder-style').value;
+            const budget = document.getElementById('finder-budget').value;
+
+            if (!month || !style) {
+                alert('Please select both month and travel style.');
+                return;
+            }
+
+            const prompt = `Suggest 5 destinations based on:
+- Travel Month: ${month}
+- Travel Style: ${style}
+- Budget Level: ${budget}
+
+For each destination, provide:
+1. Destination name with country
+2. Why it's perfect for ${style} travelers in ${month}
+3. Key highlights and experiences
+4. Typical ${budget} budget range
+5. Weather conditions in ${month}
+
+Format beautifully with Markdown. Make each destination compelling and specific.`;
+
+            setLoading(true, btn, loader, btnText);
+
+            try {
+                const result = await callGeminiAPI(prompt);
+                showResults(result);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                setLoading(false, btn, loader, btnText);
+            }
+        });
+    }
+
+    // Handle Content Generation
+    contentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('generate-content-btn');
+        const loader = btn.querySelector('.loader');
+        const btnText = btn.querySelector('.btn-text');
+
+        const type = document.getElementById('content-type').value;
+        const dest = document.getElementById('content-destination').value;
+        const extra = document.getElementById('content-extra').value;
+
+        const prompt = `Write a ${type} for ${dest}. Focus on: ${extra}. Make it engaging and useful for travelers. Format nicely with Markdown.`;
+
+        setLoading(true, btn, loader, btnText);
+
+        try {
+            const result = await callGeminiAPI(prompt);
+            showResults(result);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            setLoading(false, btn, loader, btnText);
+        }
+    });
+
+    // Helper functions
+    let currentItinerary = ''; // Store current itinerary for modifications
+    let currentContext = {}; // Store destination, days, nights, prefs
+
+    function setLoading(isLoading, btn, loader, btnText) {
+        if (isLoading) {
+            btn.disabled = true;
+            loader.classList.remove('hidden');
+            btnText.textContent = 'Generating...';
+        } else {
+            btn.disabled = false;
+            loader.classList.add('hidden');
+            if (btn.id === 'generate-itinerary-btn') {
+                btnText.textContent = 'Craft My Adventure';
+            } else if (btn.id === 'find-destinations-btn') {
+                btnText.textContent = 'Find Perfect Destinations';
+            } else if (btn.id === 'modify-btn') {
+                btnText.textContent = 'Apply Changes';
+            } else {
+                btnText.textContent = 'Generate Intelligence';
+            }
+        }
+    }
+
+    function showResults(content) {
+        currentItinerary = content; // Store for modifications
+        resultsContent.textContent = content;
+        resultsSection.classList.remove('hidden');
+
+        // Show modification panel
+        const modPanel = document.getElementById('modification-panel');
+        if (modPanel) {
+            modPanel.style.display = 'block';
+        }
+
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Handle Modification Requests
+    const modificationForm = document.getElementById('modification-form');
+    if (modificationForm) {
+        modificationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('modify-btn');
+            const loader = btn.querySelector('.loader');
+            const btnText = btn.querySelector('.btn-text');
+            const userRequest = document.getElementById('modification-input').value;
+
+            if (!userRequest.trim()) {
+                alert('Please enter a modification request.');
+                return;
+            }
+
+            if (!currentItinerary) {
+                alert('Please generate an itinerary first.');
+                return;
+            }
+
+            // Modification prompt
+            const modPrompt = `Modify the existing itinerary.
+
+User request: "${userRequest}"
+
+Current Itinerary:
+${currentItinerary}
+
+Keep structure same.
+Only adjust relevant parts.
+Maintain travel optimization.
+Format beautifully with Markdown.`;
+
+            setLoading(true, btn, loader, btnText);
+
+            try {
+                const result = await callGeminiAPI(modPrompt);
+                showResults(result);
+                document.getElementById('modification-input').value = ''; // Clear input
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                setLoading(false, btn, loader, btnText);
+            }
+        });
+    }
+
+    // Copy to clipboard
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(resultsContent.textContent).then(() => {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => copyBtn.textContent = originalText, 2000);
+        });
+    });
+
+    // Scroll Reveal Animation
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // Hero Scroll Effect
+    const bgLayers = [
+        document.querySelector('.layer-1'),
+        document.querySelector('.layer-2'),
+        document.querySelector('.layer-3'),
+        document.querySelector('.layer-4')
+    ];
+    const heroText = document.querySelector('.hero h1');
+    const heroP = document.querySelector('.hero p');
+
+    window.addEventListener('scroll', () => {
+        const scroll = window.pageYOffset;
+        const windowHeight = window.innerHeight;
+        const totalHeight = document.documentElement.scrollHeight - windowHeight;
+        const progress = scroll / totalHeight;
+
+        // Global Scale effect (1.1 to 0.85)
+        const scale = 1.1 - (progress * 0.25);
+
+        // Hero Content Fade
+        const heroOpacity = Math.max(0, 1 - (scroll / (windowHeight * 0.5)));
+        if (heroText) heroText.style.opacity = heroOpacity;
+        if (heroP) heroP.style.opacity = heroOpacity;
+
+        // Background Layer Transitions
+        bgLayers.forEach((layer, index) => {
+            if (!layer) return;
+
+            const parallaxShift = progress * -100;
+            layer.style.transform = `scale(${scale}) translateY(${parallaxShift}px)`;
+
+            if (index === 0) {
+                layer.style.opacity = 1;
+            } else {
+                const start = (index - 1) * 0.3 + 0.1;
+                const end = start + 0.3;
+
+                let layerOpacity = 0;
+                if (progress > start) {
+                    layerOpacity = Math.min(1, (progress - start) / (end - start));
+                }
+                layer.style.opacity = layerOpacity;
+            }
+        });
+    });
+});
