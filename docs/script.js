@@ -35,9 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function callGeminiAPI(prompt) {
         let apiKey = localStorage.getItem('gemini_api_key');
 
-        // Fallback for demo purposes
+        // Primary API Key (Hardcoded as per owner request)
         if (!apiKey) {
-            apiKey = "AIzaSyBljKqmqUdhKOUsKVkcs10JKOR56r4cK4E";
+            apiKey = "AIzaSyD4zUodxal4lPfpELIr6GrVfCq3p5EJtvs";
         }
 
         if (!apiKey) {
@@ -111,36 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Save API Key
-    const saveKeyBtn = document.getElementById('save-key-btn');
-    const apiKeyInput = document.getElementById('api-key-input');
 
-    // Load existing key or check Magic Link
-    const urlParams = new URLSearchParams(window.location.search);
-    const magicKey = urlParams.get('key');
-
-    if (magicKey) {
-        localStorage.setItem('gemini_api_key', magicKey);
-        // Clean URL without reloading
-        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-        window.history.pushState({ path: newUrl }, '', newUrl);
-        apiKeyInput.value = magicKey;
-        alert('API Key auto-configured from Magic Link!');
-    } else if (localStorage.getItem('gemini_api_key')) {
-        apiKeyInput.value = localStorage.getItem('gemini_api_key');
-    }
-
-    if (saveKeyBtn) {
-        saveKeyBtn.addEventListener('click', () => {
-            const key = apiKeyInput.value.trim();
-            if (key) {
-                localStorage.setItem('gemini_api_key', key);
-                alert('API Key saved successfully!');
-            } else {
-                alert('Please enter a valid API Key.');
-            }
-        });
-    }
 
     // Handle Itinerary Generation
     itineraryForm.addEventListener('submit', async (e) => {
