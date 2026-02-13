@@ -144,7 +144,13 @@ INSTRUCTIONS:
    - 💡 3 Travel Tips
    - 🌐 AI Language Toolkit Essentials
 
-Format the entire response as a professional travel dossier using Markdown.`;
+12. Formatting Rules:
+   - Use double line breaks between ALL sections and days.
+   - Use bold headers (###) for days.
+   - Use bullet points for activities.
+   - Ensure the markdown is clean and well-spaced.
+
+Format the entire response as a professional travel dossier using structured Markdown.`;
 
         setLoading(true, btn, loader, btnText);
 
@@ -233,7 +239,9 @@ Organize the checklist into these sections:
 - 🔌 Gadgets (Tech, power, capture)
 - 📄 Documents (Travel essentials)
 
-Keep the formatting clean with Markdown checkboxes [ ].`;
+Keep the formatting clean with Markdown checkboxes [ ]. 
+Use double line breaks between categories for extreme readability. 
+Use ### for headers.`;
 
             setLoading(true, btn, loader, btnText);
 
@@ -301,7 +309,7 @@ Keep the formatting clean with Markdown checkboxes [ ].`;
 
     function showResults(content) {
         currentItinerary = content; // Store for modifications
-        resultsContent.textContent = content;
+        resultsContent.innerHTML = marked.parse(content);
         resultsSection.classList.remove('hidden');
 
         // Show modification panel
