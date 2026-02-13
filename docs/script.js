@@ -187,7 +187,17 @@ Estimate total trip cost for ${dest}:
 - Local transport per day
 - Activity tickets & entry fees
 
-Show the estimated total cost for ${days} days and provide 3 practical cost-saving tips.`;
+Show the estimated total cost for ${days} days and provide 3 practical cost-saving tips.
+
+PACKING CHECKLIST:
+Generate a specific packing checklist for ${dest} in the travel month mentioned.
+Organize into:
+- 👗 Clothing (Weather-appropriate & respectful for local culture)
+- 🎒 Essentials (Sunscreen, medication, walking shoes)
+- 🔌 Gadgets (Adapters, power banks, camera)
+- 📄 Documents (ID, bookings, insurance)
+
+Format the entire response as a professional travel dossier. `;
 
         setLoading(true, btn, loader, btnText);
 

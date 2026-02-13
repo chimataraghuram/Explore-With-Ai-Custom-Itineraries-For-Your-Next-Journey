@@ -46,14 +46,17 @@ STRICT INSTRUCTIONS:
 9. For each landmark or restaurant, include a Google Maps link in this format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
 10. Keep the output highly structured, professional, and easy to read using Markdown.
 
-COST BREAKDOWN (at the end):
-Estimate total trip cost for {destination}:
-- Budget hotel per night
-- Food per day
-- Local transport per day
-- Activity tickets & entry fees
+Show the estimated total cost for {days} days and provide 3 practical cost-saving tips.
 
-Show the estimated total cost for {days} days and provide 3 practical cost-saving tips."""
+PACKING CHECKLIST:
+Generate a specific packing checklist for {destination} in the travel month mentioned.
+Organize into:
+- 👗 Clothing (Weather-appropriate & respectful for local culture)
+- 🎒 Essentials (Sunscreen, medication, walking shoes)
+- 🔌 Gadgets (Adapters, power banks, camera)
+- 📄 Documents (ID, bookings, insurance)
+
+Format the entire response as a professional travel dossier. """
 
   #start a new chat session with the model
   chat_session = model.start_chat(
