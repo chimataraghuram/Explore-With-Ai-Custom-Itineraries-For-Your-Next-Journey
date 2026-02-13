@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from travel import generate_itinerary, generate_travel_content, generate_packing_checklist
+from travel import generate_itinerary, generate_travel_content, generate_packing_checklist, modify_itinerary
 import uvicorn
 import os
 
@@ -69,6 +69,21 @@ async def api_packing(request: PackingRequest):
             activities=request.activities
         )
         return {"checklist": checklist}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class ModificationRequest(BaseModel):
+    current_itinerary: str
+    user_request: str
+
+@app.post("/api/modify-itinerary")
+async def api_modify(request: ModificationRequest):
+    try:
+        updated_itinerary = modify_itinerary(
+            current_itinerary=request.current_itinerary,
+            user_request=request.user_request
+        )
+        return {"itinerary": updated_itinerary}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

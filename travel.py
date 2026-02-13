@@ -92,11 +92,11 @@ def generate_travel_content(content_type, destination, extra_info):
 
     prompt = ""
     if content_type == "Article":
-        prompt = f"Write a professional and engaging travel article about {destination}. Include catchy headings and interesting insights. Base it on: {extra_info}"
+        prompt = f"Write a professional and engaging travel article about {destination}. Include catchy headings and interesting insights. Base it on: {extra_info}. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
     elif content_type == "Destination Guide":
-        prompt = f"Create a comprehensive destination guide for {destination}. Include best time to visit, top attractions, and hidden gems. Context: {extra_info}"
+        prompt = f"Create a comprehensive destination guide for {destination}. Include best time to visit, top attractions, and hidden gems. Context: {extra_info}. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
     elif content_type == "Travel Tips":
-        prompt = f"Provide a list of practical and helpful travel tips for visiting {destination}. Focus on culture, safety, and budget. Context: {extra_info}"
+        prompt = f"Provide a list of practical and helpful travel tips for visiting {destination}. Focus on culture, safety, and budget. Context: {extra_info}. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
 
     response = model.generate_content(prompt)
     return response.text
@@ -134,6 +134,41 @@ Organize the checklist into these sections:
 - 📄 Documents (Travel essentials)
 
 Keep the formatting clean with Markdown checkboxes [ ]."""
+
+    response = model.generate_content(prompt)
+    return response.text
+
+# function to modify an existing itinerary
+def modify_itinerary(current_itinerary, user_request):
+    generation_config = {
+        "temperature": 0.4,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config
+    )
+
+    prompt = f"""Modify the following travel itinerary based on the user's specific request.
+    
+User Request: "{user_request}"
+
+Original Itinerary:
+{current_itinerary}
+
+STRICT INSTRUCTIONS:
+1. Keep the overall structure (Day-wise, Morning/Afternoon/Evening) identical.
+2. Only adjust the specific sections or activities mentioned in the request.
+3. Maintain geographical optimization (ensure the plan still makes sense spatially).
+4. Keep the same professional tone and formatting (Markdown, links, etc.).
+5. If the request is a general preference, apply it across relevant days.
+6. For each place mentioned or added, include a Google Maps search link in this format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
+
+Format the response as the updated itinerary only."""
 
     response = model.generate_content(prompt)
     return response.text

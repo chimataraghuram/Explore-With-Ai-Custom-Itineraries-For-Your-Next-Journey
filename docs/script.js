@@ -240,6 +240,7 @@ For each destination, provide:
 3. Key highlights and experiences
 4. Typical ${budget} budget range
 5. Weather conditions in ${month}
+6. Include a Google Maps search link: [Destination Name](https://www.google.com/maps/search/?api=1&query=DESTINATION_NAME)
 
 Format beautifully with Markdown. Make each destination compelling and specific.`;
 
@@ -312,7 +313,7 @@ Keep the formatting clean with Markdown checkboxes [ ].`;
         const dest = document.getElementById('content-destination').value;
         const extra = document.getElementById('content-extra').value;
 
-        const prompt = `Write a ${type} for ${dest}. Focus on: ${extra}. Make it engaging and useful for travelers. Format nicely with Markdown.`;
+        const prompt = `Write a ${type} for ${dest}. Focus on: ${extra}. Make it engaging and useful for travelers. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME). Format nicely with Markdown.`;
 
         setLoading(true, btn, loader, btnText);
 

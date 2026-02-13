@@ -1,5 +1,5 @@
 import streamlit as st
-from travel import generate_itinerary, generate_travel_content, generate_packing_checklist
+from travel import generate_itinerary, generate_travel_content, generate_packing_checklist, modify_itinerary
 
 # Page configuration for a premium feel
 st.set_page_config(
@@ -53,12 +53,30 @@ with tab1:
                     itinerary = generate_itinerary(
                         destination=destination, days=days, nights=nights, description=description
                     )
+                    st.session_state['current_itinerary'] = itinerary
                     st.success("Here's your custom itinerary!")
-                    st.markdown(itinerary)
                 except Exception as e:
                     st.error(f'An error occurred: {e}')
         else:
             st.error("Please enter a destination")
+
+    if 'current_itinerary' in st.session_state:
+        st.markdown(st.session_state['current_itinerary'])
+        
+        st.divider()
+        st.header("✨ Modify Your Itinerary")
+        mod_request = st.text_area("What would you like to change?", placeholder="e.g. Add more museums on Day 2, or make it more budget-friendly")
+        if st.button("Apply Modifications"):
+            if mod_request.strip():
+                with st.spinner("Updating your journey..."):
+                    try:
+                        updated = modify_itinerary(st.session_state['current_itinerary'], mod_request)
+                        st.session_state['current_itinerary'] = updated
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Modification failed: {e}")
+            else:
+                st.warning("Please enter a modification request.")
 
 with tab2:
     st.header("Engaging Travel Content")
