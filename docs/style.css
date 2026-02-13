@@ -5,12 +5,15 @@
     --secondary: #22c55e;
     --accent: #f093fb;
     --bg-dark: #020617;
-    --surface: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --text-main: #f8fafc;
-    --text-dim: #94a3b8;
+    --surface: rgba(15, 23, 42, 0.4);
+    /* Darker and more opaque for better contrast */
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-main: #ffffff;
+    /* pure white for maximum visibility */
+    --text-dim: #cbd5e1;
+    /* lighter dim text */
     --grad-blue: linear-gradient(135deg, #c2ff4d 0%, #22c55e 100%);
-    --shadow-glow: 0 0 30px rgba(194, 255, 77, 0.15);
+    --shadow-glow: 0 0 30px rgba(194, 255, 77, 0.2);
 }
 
 @keyframes blob-float {
@@ -457,20 +460,33 @@ nav {
 }
 
 .search-field label {
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.8rem;
+    /* slightly larger */
+    font-weight: 800;
+    /* bolder */
     color: var(--primary);
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    /* depth for legibility */
 }
 
 .search-field input,
 .search-field select {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+    /* darker input bg */
     border: 1px solid var(--glass-border);
     border-radius: 12px;
     padding: 12px;
-    color: white;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
     outline: none;
+}
+
+.search-field input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    /* brightened placeholder */
 }
 
 .search-btn {
@@ -646,10 +662,20 @@ main {
 /* Results Markdown */
 .markdown-body {
     padding: 40px;
-    border-radius: 20px;
-    background: rgba(15, 23, 42, 0.3);
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.7);
+    /* Much darker for reading */
     border: 1px solid var(--glass-border);
     margin-top: 40px;
+    color: var(--text-main);
+    line-height: 1.8;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    color: var(--primary);
+    margin-top: 20px;
 }
 
 /* Modern Footer Redesign */
