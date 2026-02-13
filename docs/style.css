@@ -811,16 +811,285 @@ main {
     }
 }
 
-/* Animations */
+/* Enhanced Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(194, 255, 77, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(194, 255, 77, 0.6), 0 0 60px rgba(194, 255, 77, 0.3);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 .reveal {
     opacity: 0;
     transform: translateY(30px);
-    transition: 0.8s;
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reveal.active {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Hero Content Animations */
+.hero h1 {
+    animation: fadeInDown 1s ease-out 0.3s both;
+}
+
+.hero p {
+    animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.hero-gallery {
+    animation: fadeIn 1.2s ease-out 0.9s both;
+}
+
+.search-container {
+    animation: scaleIn 0.8s ease-out 1.2s both;
+}
+
+/* Primary Button Enhanced Animation */
+.primary-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.primary-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.primary-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.primary-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(194, 255, 77, 0.4);
+}
+
+.primary-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Search Button Enhanced */
+.search-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.search-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+.search-btn:hover::after {
+    width: 200px;
+    height: 200px;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(194, 255, 77, 0.35);
+}
+
+.search-btn:active {
+    transform: scale(0.95);
+}
+
+/* Input Focus Animations */
+.search-field input:focus,
+.search-field select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(194, 255, 77, 0.3);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Card Animations */
+.scenario-card {
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+.scenario-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.scenario-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.scenario-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* Destination Card Hover Effects */
+.dest-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dest-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(194, 255, 77, 0.2);
+}
+
+/* Tab Button Animations */
+.tab-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.tab-btn::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.tab-btn:hover::before {
+    width: 80%;
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Loading Animation for Generator */
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner {
+    border: 3px solid rgba(194, 255, 77, 0.2);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spinner 0.8s linear infinite;
+    margin: 20px auto;
+}
+
+/* Message Fade In */
+.message-fade-in {
+    animation: fadeInUp 0.5s ease-out both;
+}
+
+/* Cursor Pointer for Interactive Elements */
+.scenario-card,
+.dest-card,
+.tab-btn,
+.primary-btn,
+.search-btn,
+.nav-links a,
+.social-btn {
+    cursor: pointer;
 }
 
 /* Mobile */
