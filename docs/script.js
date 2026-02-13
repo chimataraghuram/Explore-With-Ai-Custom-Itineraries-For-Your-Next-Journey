@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('Please save your Google Gemini API Key in the Settings tab first.');
         }
 
-        // Using gemini-flash-latest for better availability
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+        // Using gemini-1.5-flash (most stable standard identifier)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
         const payload = {
             contents: [{ parts: [{ text: prompt }] }]
         };
