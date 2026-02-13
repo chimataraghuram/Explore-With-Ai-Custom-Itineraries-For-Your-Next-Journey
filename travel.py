@@ -22,6 +22,10 @@ def generate_itinerary(destination, days, nights, description):
   # Enhanced AI Travel Planner Prompt
   enhanced_prompt = f"""You are TravelGuideAI, an intelligent travel planning assistant.
 
+Before generating the itinerary:
+- Briefly consider the typical climate conditions in {destination} during the travel month mentioned in preferences.
+- Identify and avoid any activities that would be inappropriate or impossible due to the seasonal weather (e.g., skiing in summer, beach days in monsoon, hiking in extreme heat).
+
 Generate a personalized travel itinerary for {destination}.
 
 Traveler Input:
@@ -40,7 +44,7 @@ STRICT INSTRUCTIONS:
    - Romantic → intimate dining, peaceful spots
    - Foodie → street food, local restaurants
    - Culture → heritage sites, museums
-6. Consider the typical weather in {destination} during the travel month mentioned in preferences.
+6. Ensure all suggested activities are appropriate for the destination's climate in the specific travel month.
 7. Include an estimated daily budget range (e.g., $100 - $150 per day).
 8. Add exactly 2 hidden local gems with a brief description of why they are special.
 9. For each landmark or restaurant, include a Google Maps link in this format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
