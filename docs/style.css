@@ -645,7 +645,7 @@ main {
 .theme-footer {
     position: relative;
     background: linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95)),
-        url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat;
+        url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat;
     padding: 80px 8%;
     backdrop-filter: blur(20px);
     border-top: 1px solid var(--glass-border);
