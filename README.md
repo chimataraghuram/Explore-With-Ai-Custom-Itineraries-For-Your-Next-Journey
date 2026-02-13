@@ -58,10 +58,17 @@ python server.py
 ```
 Then open `http://localhost:8000` in your browser.
 
-## Deployment
+## 📄 License
 
-Since this application requires a Python backend, it **cannot** be hosted on GitHub Pages (which only supports static sites).
+This project is protected by a **STRICT PROPRIETARY LICENSE**. 
 
-### Recommended Hosting:
-- **Streamlit Cloud**: Easiest for `app.py`. Connect your GitHub repo and select `app.py` as the entry point.
-- **Render / Railway**: Best for the full web app (`server.py`).
+Copyright (c) 2026 CHIMATA RAGHURAM. All rights reserved.
+
+- **No Unauthorized Copying**: You may not copy, modify, or distribute this code without explicit permission.
+- **Personal Use Only**: The code is provided for educational and personal viewing only.
+- **Commercial Use Prohibited**: Usage for any commercial or profit-generating activity is strictly forbidden.
+
+For full details, please refer to the [LICENSE](LICENSE) file.
+
+---
+*COOKED By Raghu*
