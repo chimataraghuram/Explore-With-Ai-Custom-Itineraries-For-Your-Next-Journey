@@ -33,19 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Generate Content via Gemini REST API
     async function callGeminiAPI(prompt) {
-        let apiKey = localStorage.getItem('gemini_api_key');
+        // Forced verified key for guaranteed performance
+        const apiKey = "AIzaSyD4zUodxal4lPfpELIr6GrVfCq3p5EJtvs";
 
-        // Primary API Key (Hardcoded as per owner request)
-        if (!apiKey) {
-            apiKey = "AIzaSyD4zUodxal4lPfpELIr6GrVfCq3p5EJtvs";
-        }
-
-        if (!apiKey) {
-            throw new Error('Please save your Google Gemini API Key in the Settings tab first.');
-        }
-
-        // Using gemini-1.5-flash (most stable standard identifier)
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        // Using gemini-2.0-flash for state-of-the-art results
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         const payload = {
             contents: [{ parts: [{ text: prompt }] }]
         };
