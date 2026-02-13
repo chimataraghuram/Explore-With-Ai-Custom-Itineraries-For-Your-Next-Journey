@@ -1130,10 +1130,11 @@ html {
     cursor: pointer;
 }
 
-/* Mobile */
+/* Mobile Optimization - Smooth & Premium Experience */
 @media (max-width: 1024px) {
     .destinations-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
 
     .scenarios-grid {
@@ -1145,21 +1146,163 @@ html {
         margin-bottom: 0;
         transform: none;
         margin-top: 20px;
+        padding: 20px;
     }
 }
 
 @media (max-width: 768px) {
-    .hero h1 {
-        font-size: 3.5rem;
+    :root {
+        --mobile-padding: 20px;
     }
 
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Navigation */
     nav {
         height: auto;
-        padding: 15px;
+        padding: 12px var(--mobile-padding);
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         top: 0;
         width: 100%;
         border-radius: 0;
+        background: rgba(2, 6, 23, 0.95);
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .nav-search {
+        width: 100%;
+    }
+
+    .nav-search input {
+        width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+        padding: 120px var(--mobile-padding) 60px;
+        min-height: auto;
+    }
+
+    .hero h1 {
+        font-size: 2.8rem;
+        line-height: 1.1;
+    }
+
+    .hero p {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
+    .hero-gallery {
+        display: none;
+        /* Hide gallery on mobile to save space and improve performance */
+    }
+
+    /* Generator Section & Tabs */
+    .generator-section {
+        padding: 40px 15px;
+        margin-bottom: 60px;
+    }
+
+    .tabs {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        gap: 10px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        /* Hide scrollbar for cleaner look */
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        flex: 0 0 auto;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+
+    .card {
+        padding: 25px 15px;
+    }
+
+    .search-container {
+        padding: 25px 15px;
+    }
+
+    /* Form Layouts */
+    .search-field input,
+    .search-field select,
+    .search-field textarea {
+        font-size: 16px;
+        /* Prevent iOS auto-zoom */
+    }
+
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        /* Stack columns on small screens */
+    }
+
+    /* Cards & Grids */
+    .destinations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dest-card {
+        margin-bottom: 20px;
+    }
+
+    /* Markdown Results */
+    .markdown-body {
+        padding: 25px 15px;
+        font-size: 0.95rem;
+    }
+
+    .markdown-body h1 {
+        font-size: 1.5rem;
+    }
+
+    .markdown-body h2 {
+        font-size: 1.3rem;
+    }
+
+    .markdown-body h3 {
+        font-size: 1.1rem;
+    }
+
+    /* Footer */
+    .theme-footer {
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .footer-social {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .primary-btn {
+        padding: 15px;
+        font-size: 1rem;
     }
 }
