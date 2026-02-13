@@ -34,7 +34,8 @@ Traveler Input:
 - Travel Style/Preferences: {description}
 
 STRICT INSTRUCTIONS:
-1. Structure output day-wise (Day 1, Day 2, Day 3...).
+1. Start the itinerary with a brief 2-sentence personalization summary explaining why this plan fits the traveler’s selected vibe and preferences.
+2. Structure output day-wise (Day 1, Day 2, Day 3...).
 2. For each day, include these specific sections: Morning, Afternoon, and Evening.
 3. Recommend local food options for each day (breakfast, lunch, or dinner suggestions).
 4. Optimize locations geographically to minimize travel time between spots.
@@ -165,7 +166,8 @@ Original Itinerary:
 {current_itinerary}
 
 STRICT INSTRUCTIONS:
-1. Keep the overall structure (Day-wise, Morning/Afternoon/Evening) identical.
+1. Start the itinerary with a brief 2-sentence personalization summary explaining why this plan fits the traveler’s selected vibe and preferences.
+2. Keep the overall structure (Day-wise, Morning/Afternoon/Evening) identical.
 2. Only adjust the specific sections or activities mentioned in the request.
 3. Maintain geographical optimization (ensure the plan still makes sense spatially).
 4. Keep the same professional tone and formatting (Markdown, links, etc.).

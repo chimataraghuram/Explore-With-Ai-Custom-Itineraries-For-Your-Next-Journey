@@ -169,7 +169,8 @@ Traveler Input:
 - Travel Style/Preferences: ${prefs}
 
 STRICT INSTRUCTIONS:
-1. Structure output day-wise (Day 1, Day 2, Day 3...).
+1. Start the itinerary with a brief 2-sentence personalization summary explaining why this plan fits the traveler’s selected vibe and preferences.
+2. Structure output day-wise (Day 1, Day 2, Day 3...).
 2. For each day, include these specific sections: Morning, Afternoon, and Evening.
 3. Recommend local food options for each day (breakfast, lunch, or dinner suggestions).
 4. Optimize locations geographically to minimize travel time between spots.
@@ -399,10 +400,12 @@ User request: "${userRequest}"
 Current Itinerary:
 ${currentItinerary}
 
-Keep structure same.
-Only adjust relevant parts.
-Maintain travel optimization.
-Format beautifully with Markdown.`;
+STRICT INSTRUCTIONS:
+1. Start the itinerary with a brief 2-sentence personalization summary explaining why this plan fits the traveler’s selected vibe and preferences.
+2. Keep structure same.
+3. Only adjust relevant parts.
+4. Maintain travel optimization.
+5. Format beautifully with Markdown.`;
 
             setLoading(true, btn, loader, btnText);
 
