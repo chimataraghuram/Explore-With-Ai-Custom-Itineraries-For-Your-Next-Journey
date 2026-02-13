@@ -20,65 +20,40 @@ def generate_itinerary(destination, days, nights, description):
   )
 
   # Enhanced AI Travel Planner Prompt
-  enhanced_prompt = f"""You are an intelligent AI travel planner.
+  enhanced_prompt = f"""You are TravelGuideAI, an intelligent travel planning assistant.
 
-Generate a detailed itinerary for {destination}.
+Generate a personalized travel itinerary for {destination}.
 
-Travel Duration: {days} days and {nights} nights
-Travel Style/Preferences: {description}
+Traveler Input:
+- Destination: {destination}
+- Trip Duration: {days} days and {nights} nights
+- Travel Style/Preferences: {description}
 
-FIRST ANALYZE:
-- Season in {destination} during the travel month
-- Tourist crowd level in the travel month (peak/moderate/low season)
-- Logical grouping of locations by area/district
-
-Then use this analysis to generate an optimized itinerary.
-
-STRICT RULES:
-- Structure output day-wise
-- Optimize locations geographically
-- Adjust activities based on Travel Style:
-   • Adventure → trekking, water sports, hiking
-   • Relax → scenic spots, cafes, sunset points
-   • Romantic → private experiences, cozy dining
-   • Foodie → local markets, signature dishes
-   • History → monuments, museums, heritage walks
-- Consider weather in the travel month
-- Avoid generic descriptions
-- Include hidden local experiences
-- Add local transport suggestions
-- Add estimated daily cost range
-- For each place mentioned, include Google Maps link:
-  Format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
-  Example: [Eiffel Tower](https://www.google.com/maps/search/?api=1&query=Eiffel+Tower+Paris)
+STRICT INSTRUCTIONS:
+1. Structure output day-wise (Day 1, Day 2, Day 3...).
+2. For each day, include these specific sections: Morning, Afternoon, and Evening.
+3. Recommend local food options for each day (breakfast, lunch, or dinner suggestions).
+4. Optimize locations geographically to minimize travel time between spots.
+5. Adjust activities specifically based on the Travel Style:
+   - Adventure → outdoor, hiking, water activities
+   - Relax → scenic spots, cafes, sunset views
+   - Romantic → intimate dining, peaceful spots
+   - Foodie → street food, local restaurants
+   - Culture → heritage sites, museums
+6. Consider the typical weather in {destination} during the travel month mentioned in preferences.
+7. Include an estimated daily budget range (e.g., $100 - $150 per day).
+8. Add exactly 2 hidden local gems with a brief description of why they are special.
+9. For each landmark or restaurant, include a Google Maps link in this format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
+10. Keep the output highly structured, professional, and easy to read using Markdown.
 
 COST BREAKDOWN (at the end):
 Estimate total trip cost for {destination}:
 - Budget hotel per night
-- Food per day (breakfast, lunch, dinner)
+- Food per day
 - Local transport per day
 - Activity tickets & entry fees
 
-Provide:
-- Estimated per person cost
-- Estimated total cost for {days} days
-- Cost saving tips (3-5 practical tips)
-
-PACKING CHECKLIST:
-Create a packing checklist for {destination} in the travel month.
-
-Consider:
-- Weather conditions
-- Planned activities
-- Trip duration ({days} days)
-
-Organize by:
-- Clothing (weather-appropriate)
-- Essentials (toiletries, medications, etc.)
-- Tech (chargers, adapters, etc.)
-- Documents (passport, tickets, insurance, etc.)
-
-Format the output beautifully with proper Markdown formatting."""
+Show the estimated total cost for {days} days and provide 3 practical cost-saving tips."""
 
   #start a new chat session with the model
   chat_session = model.start_chat(
