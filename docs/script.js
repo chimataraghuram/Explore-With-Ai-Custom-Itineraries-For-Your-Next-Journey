@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Forced verified key for guaranteed performance
         const apiKey = "AIzaSyD4zUodxal4lPfpELIr6GrVfCq3p5EJtvs";
 
-        // Using gemini-2.0-flash for state-of-the-art results
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        // Using gemini-flash-latest to avoid quota/v1beta issues
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
         const payload = {
             contents: [{ parts: [{ text: prompt }] }]
         };
