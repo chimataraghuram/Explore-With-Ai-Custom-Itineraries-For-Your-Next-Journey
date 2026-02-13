@@ -51,10 +51,12 @@ INSTRUCTIONS:
 7. Include 2 hidden local gems.
 8. Provide estimated daily budget range in INR.
 9. For each landmark or restaurant, include a Google Maps link in this format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
-10. End with:
+10. **AI Language Toolkit**: Include a section with 5 essential local phrases in the native language of the destination (with English translation and pronunciation).
+11. End with:
    - 💰 Estimated Total Trip Cost (with breakdown)
    - 🧳 Smart Packing Suggestions
    - 💡 3 Travel Tips
+   - 🌐 AI Language Toolkit (Essentials for ${destination})
 
 Formatting Rules:
 - Use clear headings
