@@ -1164,53 +1164,57 @@ html {
 
     /* Compact & Pro Navigation */
     nav {
-        height: auto;
-        padding: 15px var(--mobile-padding);
-        flex-direction: column;
-        gap: 12px;
+        height: 70px;
+        /* Fixed height for consistency */
+        padding: 0 var(--mobile-padding);
+        flex-direction: row;
+        /* Horizontal layout */
+        justify-content: space-between;
+        align-items: center;
         top: 0;
         width: 100%;
         border-radius: 0;
-        background: rgba(2, 6, 23, 0.98);
+        background: rgba(2, 6, 23, 0.95);
+        backdrop-filter: blur(15px);
         border-bottom: 1px solid var(--glass-border);
     }
 
     .logo-capsule {
-        margin-bottom: 5px;
+        margin-bottom: 0;
     }
 
     .logo {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
     .nav-links {
-        width: 100%;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
+        width: auto;
+        justify-content: flex-end;
+        gap: 8px;
     }
 
     .nav-links a {
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        box-shadow: none;
-        background: rgba(255, 255, 255, 0.05);
+        padding: 6px 10px;
+        font-size: 0.7rem;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-links a.active {
+        background: var(--primary);
+        color: var(--bg-dark);
     }
 
     .nav-search {
-        width: 100%;
-    }
-
-    .nav-search input {
-        width: 100%;
-        height: 40px;
-        font-size: 0.9rem;
+        display: none;
+        /* Hide cluttered search bar in mobile nav */
     }
 
     /* Hero Refinement */
     .hero {
-        padding: 160px var(--mobile-padding) 60px;
+        padding: 100px var(--mobile-padding) 40px;
         min-height: auto;
+        text-align: center;
     }
 
     .hero h1 {
@@ -1341,15 +1345,27 @@ html {
 
 @media (max-width: 480px) {
     .hero h1 {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
+        /* Even more compact for very small screens */
+        letter-spacing: -0.5px;
     }
 
     .logo {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
+    }
+
+    .nav-links {
+        display: none;
+        /* Hide links on ultra-small screens to keep logo clean, OR keep them very small */
     }
 
     .primary-btn {
-        padding: 16px;
-        font-size: 1.05rem;
+        padding: 14px;
+        font-size: 0.9rem;
+    }
+
+    .search-field input {
+        font-size: 14px;
+        padding: 10px;
     }
 }
