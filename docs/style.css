@@ -583,6 +583,18 @@ main {
 }
 
 /* Generator */
+/* Generator - Completely Static */
+.generator-section,
+.generator-section *,
+#generator,
+#generator * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    /* Optional: remove glow effects too for 'complete' look */
+}
+
 .generator-section {
     padding: 80px 40px;
     margin-bottom: 100px;
