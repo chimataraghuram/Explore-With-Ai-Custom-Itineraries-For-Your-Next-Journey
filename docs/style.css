@@ -643,16 +643,13 @@ main {
 /* Modern Footer Redesign */
 /* Glassy Theme Footer - Matching Hero Image Style */
 .theme-footer {
-    padding: 80px 8%;
+    position: relative;
     background: linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95)),
-        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+        url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat;
+    padding: 80px 8%;
     backdrop-filter: blur(20px);
     border-top: 1px solid var(--glass-border);
     margin-top: 100px;
-    position: relative;
     overflow: hidden;
 }
 
