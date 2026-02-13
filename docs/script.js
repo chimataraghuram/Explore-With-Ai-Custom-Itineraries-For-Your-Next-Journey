@@ -491,7 +491,7 @@ STRICT INSTRUCTIONS:
     // ===== ENHANCED ANIMATIONS =====
 
     // Parallax Mouse Movement on Cards
-    const cards = document.querySelectorAll('.dest-card, .scenario-card, .glass-panel');
+    const cards = document.querySelectorAll('.dest-card, .scenario-card, .glass-panel:not(.generator-section)');
     cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
