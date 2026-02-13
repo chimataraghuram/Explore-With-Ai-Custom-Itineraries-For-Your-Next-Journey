@@ -41,17 +41,19 @@ with tab1:
     with col1:
         destination = st.text_input("Where do you want to go?", placeholder="e.g. Kyoto, Japan", key="itinerary_dest")
         days = st.number_input("Days", min_value=1, value=3, key="itinerary_days")
+        month = st.selectbox("Travel Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], key="travel_month")
     
     with col2:
         nights = st.number_input("Nights", min_value=0, value=2, key="itinerary_nights")
-        description = st.text_area("Additional preferences", placeholder="e.g. food lover, hiking enthusiast", key="itinerary_prefs")
+        vibe = st.selectbox("Travel Style", ["Adventure", "Relax", "Romantic", "Foodie", "Culture"], key="travel_vibe")
+        budget = st.selectbox("Budget Level", ["Budget", "Moderate", "Luxury"], key="travel_budget")
 
     if st.button("Generate My Itinerary"):
         if destination.strip():
             with st.spinner("Crafting your perfect journey..."):
                 try:
                     itinerary = generate_itinerary(
-                        destination=destination, days=days, nights=nights, description=description
+                        destination=destination, days=days, nights=nights, month=month, vibe=vibe, budget=budget
                     )
                     st.session_state['current_itinerary'] = itinerary
                     st.success("Here's your custom itinerary!")

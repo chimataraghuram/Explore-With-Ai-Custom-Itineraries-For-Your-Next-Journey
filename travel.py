@@ -4,7 +4,7 @@ from config import api_key
 genai.configure(api_key = api_key)
 
 #function to generate travel itinerary based on user input
-def generate_itinerary(destination, days, nights, description):
+def generate_itinerary(destination, days, nights, month, vibe, budget):
   generation_config = {
     "temperature": 0.4,
     "top_p": 0.95,
@@ -19,49 +19,51 @@ def generate_itinerary(destination, days, nights, description):
     generation_config=generation_config
   )
 
-  # Enhanced AI Travel Planner Prompt
-  enhanced_prompt = f"""You are TravelGuideAI, an intelligent travel planning assistant.
+  # Enhanced AI Travel Planner Prompt - Premium Version
+  enhanced_prompt = f"""You are TravelGuideAI, an intelligent and professional AI travel planner.
 
-Before generating the itinerary:
-- Briefly consider the typical climate conditions in {destination} during the travel month mentioned in preferences.
-- Identify and avoid any activities that would be inappropriate or impossible due to the seasonal weather (e.g., skiing in summer, beach days in monsoon, hiking in extreme heat).
+Create a fully personalized travel itinerary.
 
-Generate a personalized travel itinerary for {destination}.
-
-Traveler Input:
+Traveler Details:
 - Destination: {destination}
 - Trip Duration: {days} days and {nights} nights
-- Travel Style/Preferences: {description}
+- Travel Month: {month}
+- Travel Style: {vibe}
+- Budget Level: {budget}
 
-STRICT INSTRUCTIONS:
-1. Start the itinerary with a brief 2-sentence personalization summary explaining why this plan fits the traveler’s selected vibe and preferences.
-2. Structure output day-wise (Day 1, Day 2, Day 3...).
-2. For each day, include these specific sections: Morning, Afternoon, and Evening.
-3. Recommend local food options for each day (breakfast, lunch, or dinner suggestions).
-4. Optimize locations geographically to minimize travel time between spots.
-5. Adjust activities specifically based on the Travel Style:
-   - Adventure → outdoor, hiking, water activities
-   - Relax → scenic spots, cafes, sunset views
+INSTRUCTIONS:
+
+1. Start with a short 2–3 sentence personalization summary explaining why this plan fits the selected travel style.
+2. Structure the itinerary day-wise (Day 1, Day 2, Day 3).
+3. Each day must include:
+   - 🌅 Morning
+   - 🍽 Lunch suggestion
+   - 🌇 Afternoon
+   - 🌙 Evening
+4. Optimize locations geographically (avoid long back-and-forth travel).
+5. Adjust activities based on Travel Style:
+   - Adventure → trekking, water sports, outdoor activities
+   - Relax → scenic views, cafes, sunset points
    - Romantic → intimate dining, peaceful spots
-   - Foodie → street food, local restaurants
-   - Culture → heritage sites, museums
-6. Ensure all suggested activities are appropriate for the destination's climate in the specific travel month.
-7. Include an estimated daily budget range (e.g., $100 - $150 per day).
-8. Add exactly 2 hidden local gems with a brief description of why they are special.
+   - Foodie → local markets, signature dishes
+   - Culture → monuments, museums, heritage walks
+6. Consider weather conditions during Travel Month: {month}
+7. Include 2 hidden local gems.
+8. Provide estimated daily budget range in INR.
 9. For each landmark or restaurant, include a Google Maps link in this format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
-10. Keep the output highly structured, professional, and easy to read using Markdown.
+10. End with:
+   - 💰 Estimated Total Trip Cost (with breakdown)
+   - 🧳 Smart Packing Suggestions
+   - 💡 3 Travel Tips
 
-Show the estimated total cost for {days} days and provide 3 practical cost-saving tips.
+Formatting Rules:
+- Use clear headings
+- Use emojis for sections
+- Keep sentences short and readable
+- Avoid generic AI phrases
+- Make it premium but easy to read on dark background
 
-PACKING CHECKLIST:
-Generate a specific packing checklist for {destination} in the travel month mentioned.
-Organize into:
-- 👗 Clothing (Weather-appropriate & respectful for local culture)
-- 🎒 Essentials (Sunscreen, medication, walking shoes)
-- 🔌 Gadgets (Adapters, power banks, camera)
-- 📄 Documents (ID, bookings, insurance)
-
-Format the entire response as a professional travel dossier. """
+Format the entire response as a professional travel dossier."""
 
   #start a new chat session with the model
   chat_session = model.start_chat(
