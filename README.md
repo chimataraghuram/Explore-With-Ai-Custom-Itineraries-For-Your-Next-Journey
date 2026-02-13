@@ -5,6 +5,7 @@ An AI-powered travel companion that generates custom itineraries and travel cont
 ## Features
 
 - **Custom Itinerary Generation**: Create day-by-day travel plans based on your destination, duration, and preferences.
+- **Smart Packing Assistant**: Get tailored packing checklists based on weather, duration, and activities.
 - **Travel Content Creation**: Generate articles, guides, and tips for travel blogs.
 - **Dual Interface**:
   - **Web App**: A custom frontend powered by FastAPI (`server.py` + `public/`).

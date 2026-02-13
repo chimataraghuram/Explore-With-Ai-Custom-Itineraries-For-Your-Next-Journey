@@ -1,5 +1,5 @@
 import streamlit as st
-from travel import generate_itinerary, generate_travel_content
+from travel import generate_itinerary, generate_travel_content, generate_packing_checklist
 
 # Page configuration for a premium feel
 st.set_page_config(
@@ -32,19 +32,19 @@ st.title("✈️ TravelGuideAI")
 st.subheader("Your Ultimate AI-Powered Travel Assistant")
 
 # Create tabs for different functionalities
-tab1, tab2 = st.tabs(["🗺️ Custom Itinerary", "✍️ Blog & Content (Scenario 3)"])
+tab1, tab2, tab3 = st.tabs(["🗺️ Custom Itinerary", "✍️ Blog & Content", "🎒 Packing Assistant"])
 
 with tab1:
     st.header("Plan Your Next Journey")
     col1, col2 = st.columns(2)
     
     with col1:
-        destination = st.text_input("Where do you want to go?", placeholder="e.g. Kyoto, Japan")
-        days = st.number_input("Days", min_value=1, value=3)
+        destination = st.text_input("Where do you want to go?", placeholder="e.g. Kyoto, Japan", key="itinerary_dest")
+        days = st.number_input("Days", min_value=1, value=3, key="itinerary_days")
     
     with col2:
-        nights = st.number_input("Nights", min_value=0, value=2)
-        description = st.text_area("Additional preferences", placeholder="e.g. food lover, hiking enthusiast")
+        nights = st.number_input("Nights", min_value=0, value=2, key="itinerary_nights")
+        description = st.text_area("Additional preferences", placeholder="e.g. food lover, hiking enthusiast", key="itinerary_prefs")
 
     if st.button("Generate My Itinerary"):
         if destination.strip():
@@ -61,12 +61,12 @@ with tab1:
             st.error("Please enter a destination")
 
 with tab2:
-    st.header("Engaging Travel Content for Websites & Blogs")
+    st.header("Engaging Travel Content")
     st.write("Generate well-researched articles, guides, and tips to engage your audience.")
     
     content_type = st.selectbox("What would you like to generate?", ["Article", "Destination Guide", "Travel Tips"])
-    blog_destination = st.text_input("Target Destination", placeholder="e.g. Paris, France")
-    blog_extra = st.text_area("Target Audience / Specific Focus", placeholder="e.g. Eco-conscious travelers, luxury budget")
+    blog_destination = st.text_input("Target Destination", placeholder="e.g. Paris, France", key="blog_dest")
+    blog_extra = st.text_area("Target Audience / Specific Focus", placeholder="e.g. Eco-conscious travelers, luxury budget", key="blog_extra")
 
     if st.button("Generate Engaging Content"):
         if blog_destination.strip():
@@ -79,4 +79,29 @@ with tab2:
                     st.error(f'An error occurred: {e}')
         else:
             st.error("Please enter a destination for the content")
+
+with tab3:
+    st.header("🎒 Smart Packing Assistant")
+    st.write("Never forget a thing. Get a personalized checklist for your trip.")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        p_destination = st.text_input("Destination", placeholder="e.g. Iceland", key="pack_dest")
+        p_month = st.selectbox("Travel Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], key="pack_month")
+    
+    with col2:
+        p_days = st.number_input("Duration (Days)", min_value=1, value=7, key="pack_days")
+        p_activities = st.text_area("Planned Activities", placeholder="e.g. Snorkeling, hiking, fine dining, photography", key="pack_activities")
+
+    if st.button("Generate Packing Checklist"):
+        if p_destination.strip():
+            with st.spinner("Compiling your checklist..."):
+                try:
+                    checklist = generate_packing_checklist(p_destination, p_month, p_days, p_activities)
+                    st.success(f"Packing checklist for {p_destination} in {p_month}!")
+                    st.markdown(checklist)
+                except Exception as e:
+                    st.error(f'An error occurred: {e}')
+        else:
+            st.error("Please enter a destination")
 

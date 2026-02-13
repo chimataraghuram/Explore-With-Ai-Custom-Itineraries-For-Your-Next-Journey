@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from travel import generate_itinerary, generate_travel_content
+from travel import generate_itinerary, generate_travel_content, generate_packing_checklist
 import uvicorn
 import os
 
@@ -50,6 +50,25 @@ async def api_content(request: ContentRequest):
             extra_info=request.extra_info
         )
         return {"content": content}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class PackingRequest(BaseModel):
+    destination: str
+    month: str
+    days: int
+    activities: str
+
+@app.post("/api/generate-packing")
+async def api_packing(request: PackingRequest):
+    try:
+        checklist = generate_packing_checklist(
+            destination=request.destination,
+            month=request.month,
+            days=request.days,
+            activities=request.activities
+        )
+        return {"checklist": checklist}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -100,3 +100,40 @@ def generate_travel_content(content_type, destination, extra_info):
 
     response = model.generate_content(prompt)
     return response.text
+
+# function to generate a specific packing checklist
+def generate_packing_checklist(destination, month, days, activities):
+    generation_config = {
+        "temperature": 0.5,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 4096,
+        "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config
+    )
+
+    prompt = f"""Create a detailed packing checklist for a trip to {destination} in {month}.
+    
+Trip Details:
+- Duration: {days} days
+- Activities: {activities}
+
+Consider:
+- Typical weather in {destination} during {month}
+- Cultural norms for clothing
+- Specific requirements for the mentioned activities
+
+Organize the checklist into these sections:
+- 👗 Clothing (Weather-appropriate & respectful)
+- 🎒 Essentials (Personal care, safety, comfort)
+- 🔌 Gadgets (Tech, power, capture)
+- 📄 Documents (Travel essentials)
+
+Keep the formatting clean with Markdown checkboxes [ ]."""
+
+    response = model.generate_content(prompt)
+    return response.text

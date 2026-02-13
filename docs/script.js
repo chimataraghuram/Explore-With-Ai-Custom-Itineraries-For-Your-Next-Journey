@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const itineraryForm = document.getElementById('itinerary-form');
     const finderForm = document.getElementById('finder-form');
     const contentForm = document.getElementById('content-form');
+    const packingForm = document.getElementById('packing-form');
     const resultsSection = document.getElementById('results');
     const resultsContent = document.getElementById('results-content');
     const copyBtn = document.getElementById('copy-btn');
@@ -255,6 +256,51 @@ Format beautifully with Markdown. Make each destination compelling and specific.
         });
     }
 
+    // Handle Packing Checklist
+    if (packingForm) {
+        packingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('generate-packing-btn');
+            const loader = btn.querySelector('.loader');
+            const btnText = btn.querySelector('.btn-text');
+
+            const dest = document.getElementById('packing-destination').value;
+            const month = document.getElementById('packing-month').value;
+            const days = document.getElementById('packing-days').value;
+            const activities = document.getElementById('packing-activities').value;
+
+            const prompt = `Create a detailed packing checklist for a trip to ${dest} in ${month}.
+    
+Trip Details:
+- Duration: ${days} days
+- Activities: ${activities}
+
+Consider:
+- Typical weather in ${dest} during ${month}
+- Cultural norms for clothing
+- Specific requirements for the mentioned activities
+
+Organize the checklist into these sections:
+- 👗 Clothing (Weather-appropriate & respectful)
+- 🎒 Essentials (Personal care, safety, comfort)
+- 🔌 Gadgets (Tech, power, capture)
+- 📄 Documents (Travel essentials)
+
+Keep the formatting clean with Markdown checkboxes [ ].`;
+
+            setLoading(true, btn, loader, btnText);
+
+            try {
+                const result = await callGeminiAPI(prompt);
+                showResults(result);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                setLoading(false, btn, loader, btnText);
+            }
+        });
+    }
+
     // Handle Content Generation
     contentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -298,6 +344,8 @@ Format beautifully with Markdown. Make each destination compelling and specific.
                 btnText.textContent = 'Find Perfect Destinations';
             } else if (btn.id === 'modify-btn') {
                 btnText.textContent = 'Apply Changes';
+            } else if (btn.id === 'generate-packing-btn') {
+                btnText.textContent = 'Generate Checklist';
             } else {
                 btnText.textContent = 'Generate Intelligence';
             }
