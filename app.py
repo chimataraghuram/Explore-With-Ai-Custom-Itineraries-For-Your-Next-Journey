@@ -12,18 +12,35 @@ st.set_page_config(
 st.markdown("""
 <style>
     .main {
-        background-color: #f8f9fa;
+        background-color: #020617;
+        color: #ffffff;
     }
     .stButton>button {
         width: 100%;
-        border-radius: 20px;
+        border-radius: 12px;
         height: 3em;
-        background-color: #ff4b4b;
-        color: white;
+        background: linear-gradient(90deg, #c2ff4d, #22c55e);
+        color: #020617;
         font-weight: bold;
+        border: none;
     }
-    .stTextInput>div>div>input {
-        border-radius: 10px;
+    .stTextInput>div>div>input, .stSelectbox>div>div>div, .stNumberInput>div>div>input {
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+    /* Simple Result Styling */
+    .stMarkdown h3 {
+        color: #c2ff4d;
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .stMarkdown p {
+        margin-bottom: 0.8rem;
+        line-height: 1.5;
+    }
+    .stMarkdown li {
+        margin-bottom: 0.4rem;
     }
 </style>
 """, unsafe_allow_html=True)

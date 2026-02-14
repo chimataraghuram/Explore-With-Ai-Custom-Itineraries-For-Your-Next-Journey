@@ -118,39 +118,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const prefs = document.getElementById('preferences').value;
 
         // Enhanced AI Travel Planner Prompt
-        const prompt = `You are TravelGuideAI, an intelligent and professional AI travel planner.
+        const prompt = `You are TravelGuideAI, a minimalist travel planner.
 
-Create a fully personalized travel itinerary for ${dest}.
+Create a simple and clean travel itinerary for ${dest}.
 
 Traveler Input:
 - Destination: ${dest}
 - Trip Duration: ${days} days and ${nights} nights
-- Preferences/Style: ${prefs}
+- Preferences: ${prefs}
 
 INSTRUCTIONS:
-1. Start with a short 2–3 sentence personalization summary explaining why this plan fits the selected travel style.
-2. Structure the itinerary day-wise (Day 1, Day 2, Day 3).
-3. Each day must include sections for 🌅 Morning, 🍽 Lunch, 🌇 Afternoon, and 🌙 Evening.
-4. Optimize locations geographically to minimize travel time.
-5. Provide specific recommendations for Food, Culture, and Adventure based on the traveler's preferences.
-6. Ensure activities are weather-appropriate for the destination.
-7. Include 2 hidden local gems with descriptions.
-8. Provide an estimated daily budget range.
-9. For each landmark or restaurant, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
-10. **AI Language Toolkit**: Include a section with 5 essential local phrases in the native language of ${dest} (with English translation and phonetic pronunciation).
-11. End with:
-   - 💰 Estimated Total Trip Cost (with breakdown)
-   - 🧳 Smart Packing Suggestions
-   - 💡 3 Travel Tips
-   - 🌐 AI Language Toolkit Essentials
+1. Keep the output extremely simple and concise.
+2. Structure the itinerary day-wise (Day 1, Day 2, etc.).
+3. Each day must have slots for: 🌅 Morning, 🍽 Lunch, 🌇 Afternoon, 🌙 Evening.
+4. Use short, punchy bullet points (max 12 words per activity).
+5. **Avoid long paragraphs.** Jump straight to the details.
+6. Include 2 local gems (briefly).
+7. For each place, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
+8. End with:
+   - 💰 Budget Range
+   - 🧳 Simple Packing List (bullet points)
+   - 💡 3 Short Tips
+   - 🌐 5 Essential Phrases
 
-12. Formatting Rules:
-   - Use double line breaks between ALL sections and days.
-   - Use bold headers (###) for days.
-   - Use bullet points for activities.
-   - Ensure the markdown is clean and well-spaced.
-
-Format the entire response as a professional travel dossier using structured Markdown.`;
+Formatting:
+   - Use clear ### headers.
+   - Use bullet points for EVERYTHING.
+   - No filler text or AI jargon.`;
 
         setLoading(true, btn, loader, btnText);
 
@@ -186,15 +180,13 @@ Format the entire response as a professional travel dossier using structured Mar
 - Travel Style: ${style}
 - Budget Level: ${budget}
 
-For each destination, provide:
-1. Destination name with country
-2. Why it's perfect for ${style} travelers in ${month}
-3. Key highlights and experiences
-4. Typical ${budget} budget range
-5. Weather conditions in ${month}
-6. Include a Google Maps search link: [Destination Name](https://www.google.com/maps/search/?api=1&query=DESTINATION_NAME)
+For each, provide a brief bulleted list:
+1. Destination name (with Maps link)
+2. Why it fits (1 sentence)
+3. Highlights (bullet points)
+4. Budget & Weather (short)
 
-Format beautifully with Markdown. Make each destination compelling and specific.`;
+Keep it simple, clean, and scannable. Format with Markdown.`;
 
             setLoading(true, btn, loader, btnText);
 
@@ -222,26 +214,19 @@ Format beautifully with Markdown. Make each destination compelling and specific.
             const days = document.getElementById('packing-days').value;
             const activities = document.getElementById('packing-activities').value;
 
-            const prompt = `Create a detailed packing checklist for a trip to ${dest} in ${month}.
+            const prompt = `Create a simple and scannable packing checklist for ${dest} in ${month}.
     
 Trip Details:
 - Duration: ${days} days
 - Activities: ${activities}
 
-Consider:
-- Typical weather in ${dest} during ${month}
-- Cultural norms for clothing
-- Specific requirements for the mentioned activities
+INSTRUCTIONS:
+- **NO long paragraphs.** Go straight to the lists.
+- Use checkboxes [ ] for every item.
+- Keep descriptions to max 5 words.
+- Use ### headers for categories (Clothing, Essentials, Gadgets, Documents).
 
-Organize the checklist into these sections:
-- 👗 Clothing (Weather-appropriate & respectful)
-- 🎒 Essentials (Personal care, safety, comfort)
-- 🔌 Gadgets (Tech, power, capture)
-- 📄 Documents (Travel essentials)
-
-Keep the formatting clean with Markdown checkboxes [ ]. 
-Use double line breaks between categories for extreme readability. 
-Use ### for headers.`;
+Format with clean Markdown.`;
 
             setLoading(true, btn, loader, btnText);
 
@@ -267,7 +252,7 @@ Use ### for headers.`;
         const dest = document.getElementById('content-destination').value;
         const extra = document.getElementById('content-extra').value;
 
-        const prompt = `Write a ${type} for ${dest}. Focus on: ${extra}. Make it engaging and useful for travelers. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME). Format nicely with Markdown.`;
+        const prompt = `Write a simple ${type} for ${dest}. Focus on: ${extra}. Use short paragraphs and bullet points. For each place, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME). Keep it minimal and readable.`;
 
         setLoading(true, btn, loader, btnText);
 
@@ -342,19 +327,17 @@ Use ### for headers.`;
             }
 
             // Modification prompt
-            const modPrompt = `Modify the existing itinerary.
-
-User request: "${userRequest}"
+            const modPrompt = `Modify the existing itinerary based on this request: "${userRequest}".
 
 Current Itinerary:
 ${currentItinerary}
 
 STRICT INSTRUCTIONS:
-1. Start the itinerary with a brief 2-sentence personalization summary explaining why this plan fits the traveler’s selected vibe and preferences.
-2. Keep structure same.
-3. Only adjust relevant parts.
-4. Maintain travel optimization.
-5. Format beautifully with Markdown.`;
+1. Keep the output extremely simple and concise.
+2. Only adjust relevant parts.
+3. Use bullet points for all activities.
+4. Avoid any long paragraphs. 
+5. Format with simple Markdown.`;
 
             setLoading(true, btn, loader, btnText);
 

@@ -59,13 +59,14 @@ INSTRUCTIONS:
    - 🌐 AI Language Toolkit (Essentials for ${destination})
 
 Formatting Rules:
-- Use clear headings
-- Use emojis for sections
-- Keep sentences short and readable
-- Avoid generic AI phrases
-- Make it premium but easy to read on dark background
+- Use clear headings and plenty of white space.
+- Use emojis for sections.
+- **Keep sentences extremely short and punchy.**
+- **Use bullet points for all lists (activities, tips, packing, etc.).**
+- **Avoid long paragraphs.** Each activity should be a single short sentence.
+- Make it premium, modern, and ultra-readable on a dark background.
 
-Format the entire response as a professional travel dossier."""
+Format the entire response as a clean, minimalist travel dossier. Keep it simple and direct. """
 
   #start a new chat session with the model
   chat_session = model.start_chat(
@@ -101,11 +102,11 @@ def generate_travel_content(content_type, destination, extra_info):
 
     prompt = ""
     if content_type == "Article":
-        prompt = f"Write a professional and engaging travel article about {destination}. Include catchy headings and interesting insights. Base it on: {extra_info}. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
+        prompt = f"Write a simple, engaging travel article about {destination}. Use short paragraphs, catchy headings, and bullet points. Base it on: {extra_info}. For each place mentioned, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
     elif content_type == "Destination Guide":
-        prompt = f"Create a comprehensive destination guide for {destination}. Include best time to visit, top attractions, and hidden gems. Context: {extra_info}. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
+        prompt = f"Create a simple, concise destination guide for {destination}. Use bullet points for attractions and tips. Context: {extra_info}. For each place mentioned, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
     elif content_type == "Travel Tips":
-        prompt = f"Provide a list of practical and helpful travel tips for visiting {destination}. Focus on culture, safety, and budget. Context: {extra_info}. For each place mentioned, include a Google Maps search link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
+        prompt = f"Provide a clean, bulleted list of practical travel tips for visiting {destination}. Focus on culture, safety, and budget. Context: {extra_info}. For each place mentioned, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)"
 
     response = model.generate_content(prompt)
     return response.text
@@ -125,24 +126,25 @@ def generate_packing_checklist(destination, month, days, activities):
         generation_config=generation_config
     )
 
-    prompt = f"""Create a detailed packing checklist for a trip to {destination} in {month}.
+    prompt = f"""Create a simple and clean packing checklist for a trip to {destination} in {month}.
     
 Trip Details:
 - Duration: {days} days
 - Activities: {activities}
 
-Consider:
-- Typical weather in {destination} during {month}
-- Cultural norms for clothing
-- Specific requirements for the mentioned activities
+INSTRUCTIONS:
+- Keep it ultra-simple and scannable.
+- **NO long paragraphs.** Jump straight to the lists.
+- Each item should be on a new line with a checkbox [ ].
+- Keep item descriptions to 5-10 words maximum.
 
 Organize the checklist into these sections:
-- 👗 Clothing (Weather-appropriate & respectful)
-- 🎒 Essentials (Personal care, safety, comfort)
-- 🔌 Gadgets (Tech, power, capture)
-- 📄 Documents (Travel essentials)
+- 👗 Clothing
+- 🎒 Essentials
+- 🔌 Gadgets
+- 📄 Documents
 
-Keep the formatting clean with Markdown checkboxes [ ]."""
+Format with Markdown checkboxes [ ]."""
 
     response = model.generate_content(prompt)
     return response.text
@@ -170,15 +172,15 @@ Original Itinerary:
 {current_itinerary}
 
 STRICT INSTRUCTIONS:
-1. Start the itinerary with a brief 2-sentence personalization summary explaining why this plan fits the traveler’s selected vibe and preferences.
-2. Keep the overall structure (Day-wise, Morning/Afternoon/Evening) identical.
-2. Only adjust the specific sections or activities mentioned in the request.
-3. Maintain geographical optimization (ensure the plan still makes sense spatially).
-4. Keep the same professional tone and formatting (Markdown, links, etc.).
-5. If the request is a general preference, apply it across relevant days.
-6. For each place mentioned or added, include a Google Maps search link in this format: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
+1. Keep the output extremely simple, concise, and easy to read.
+2. Use short, punchy sentences.
+3. Use bullet points for all activities.
+4. Avoid any long paragraphs or filler text.
+5. Only adjust the specific sections or activities mentioned in the request.
+6. Maintain the structure (Morning/Afternoon/Evening) but keep it minimalist.
+7. For each place mentioned or added, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
 
-Format the response as the updated itinerary only."""
+Format the response as the updated minimalist itinerary only."""
 
     response = model.generate_content(prompt)
     return response.text
