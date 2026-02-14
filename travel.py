@@ -15,7 +15,7 @@ def generate_itinerary(destination, days, nights, month, vibe, budget):
 
   #initialize the generative model
   model = genai.GenerativeModel(
-    model_name="gemini-flash-latest",
+    model_name="gemini-1.5-flash-latest",
     generation_config=generation_config
   )
 
@@ -84,7 +84,7 @@ def generate_travel_content(content_type, destination, extra_info):
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-flash-latest",
         generation_config=generation_config
     )
 
@@ -110,7 +110,7 @@ def generate_packing_checklist(destination, month, days, activities):
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-flash-latest",
         generation_config=generation_config
     )
 
@@ -148,7 +148,7 @@ def modify_itinerary(current_itinerary, user_request):
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-flash-latest",
         generation_config=generation_config
     )
 
