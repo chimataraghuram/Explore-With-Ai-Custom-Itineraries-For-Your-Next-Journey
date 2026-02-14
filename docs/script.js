@@ -8,6 +8,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsSection = document.getElementById('results');
     const resultsContent = document.getElementById('results-content');
     const copyBtn = document.getElementById('copy-btn');
+    const searchInput = document.querySelector('.nav-search input');
+
+    // Search Functionality
+    if (searchInput) {
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (query) {
+                    const generatorSection = document.getElementById('generator');
+                    generatorSection.scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('TAB_ITINERARY_BTN').click(); // Ensure correct tab is active
+                    document.getElementById('destination').value = query;
+                }
+            }
+        });
+    }
 
     // Tab Switching
     tabBtns.forEach(btn => {
