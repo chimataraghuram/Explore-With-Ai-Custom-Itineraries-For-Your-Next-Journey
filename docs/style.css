@@ -286,6 +286,19 @@ nav {
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 8px 18px;
     border-radius: 40px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-search:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-search:focus-within {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(194, 255, 77, 0.15);
+    transform: scale(1.02);
 }
 
 .nav-search input {
