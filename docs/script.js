@@ -41,10 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = {
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-                temperature: 0.2,
+                temperature: 0.4,
                 topP: 0.9,
                 topK: 40,
-                maxOutputTokens: 1024,
+                maxOutputTokens: 8192,
             }
         };
 
