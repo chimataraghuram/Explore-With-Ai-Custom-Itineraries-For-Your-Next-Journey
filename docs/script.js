@@ -36,15 +36,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Forced verified key for guaranteed performance
         const apiKey = "AIzaSyD4zUodxal4lPfpELIr6GrVfCq3p5EJtvs";
 
-        // Using gemini-flash-latest to avoid quota/v1beta issues
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+        // Using gemini-1.5-flash-8b for ultra-fast performance
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${apiKey}`;
         const payload = {
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-                temperature: 0.2,
+                temperature: 0.1,
                 topP: 0.8,
-                topK: 40,
-                maxOutputTokens: 1024,
+                topK: 20,
+                maxOutputTokens: 800,
             }
         };
 

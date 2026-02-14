@@ -76,15 +76,15 @@ Format the entire response as a clean, minimalist travel dossier. Keep it simple
 # function to generate engaging travel content for Scenario 3
 def generate_travel_content(content_type, destination, extra_info):
     generation_config = {
-        "temperature": 0.3,
+        "temperature": 0.2,
         "top_p": 0.8,
-        "top_k": 40,
-        "max_output_tokens": 1024,
+        "top_k": 20,
+        "max_output_tokens": 700,
         "response_mime_type": "text/plain",
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-flash-latest",
+        model_name="gemini-1.5-flash-8b",
         generation_config=generation_config
     )
 
@@ -102,15 +102,15 @@ def generate_travel_content(content_type, destination, extra_info):
 # function to generate a specific packing checklist
 def generate_packing_checklist(destination, month, days, activities):
     generation_config = {
-        "temperature": 0.2,
+        "temperature": 0.1,
         "top_p": 0.8,
-        "top_k": 40,
-        "max_output_tokens": 800,
+        "top_k": 20,
+        "max_output_tokens": 500,
         "response_mime_type": "text/plain",
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-flash-latest",
+        model_name="gemini-1.5-flash-8b",
         generation_config=generation_config
     )
 
@@ -140,15 +140,15 @@ Format with Markdown checkboxes [ ]."""
 # function to modify an existing itinerary
 def modify_itinerary(current_itinerary, user_request):
     generation_config = {
-        "temperature": 0.2,
+        "temperature": 0.1,
         "top_p": 0.8,
-        "top_k": 40,
-        "max_output_tokens": 1024,
+        "top_k": 20,
+        "max_output_tokens": 800,
         "response_mime_type": "text/plain",
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-flash-latest",
+        model_name="gemini-1.5-flash-8b",
         generation_config=generation_config
     )
 
