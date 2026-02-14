@@ -68,30 +68,18 @@ Formatting Rules:
 
 Format the entire response as a clean, minimalist travel dossier. Keep it simple and direct. """
 
-  #start a new chat session with the model
-  chat_session = model.start_chat(
-  history = [
-    {
-      "role": "user",
-      "parts": [
-        enhanced_prompt,
-      ],
-    },
-  ]
-  )
-
-  #send the message to the chat and get the response
-  response = chat_session.send_message(enhanced_prompt)
+  # Direct generation for faster response
+  response = model.generate_content(enhanced_prompt)
 
   return response.text
 
 # function to generate engaging travel content for Scenario 3
 def generate_travel_content(content_type, destination, extra_info):
     generation_config = {
-        "temperature": 0.7,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 8192,
+        "temperature": 0.3,
+        "top_p": 0.8,
+        "top_k": 40,
+        "max_output_tokens": 1024,
         "response_mime_type": "text/plain",
     }
 
@@ -114,10 +102,10 @@ def generate_travel_content(content_type, destination, extra_info):
 # function to generate a specific packing checklist
 def generate_packing_checklist(destination, month, days, activities):
     generation_config = {
-        "temperature": 0.5,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 4096,
+        "temperature": 0.2,
+        "top_p": 0.8,
+        "top_k": 40,
+        "max_output_tokens": 800,
         "response_mime_type": "text/plain",
     }
 
@@ -152,10 +140,10 @@ Format with Markdown checkboxes [ ]."""
 # function to modify an existing itinerary
 def modify_itinerary(current_itinerary, user_request):
     generation_config = {
-        "temperature": 0.4,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 8192,
+        "temperature": 0.2,
+        "top_p": 0.8,
+        "top_k": 40,
+        "max_output_tokens": 1024,
         "response_mime_type": "text/plain",
     }
 

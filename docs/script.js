@@ -39,7 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Using gemini-flash-latest to avoid quota/v1beta issues
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
         const payload = {
-            contents: [{ parts: [{ text: prompt }] }]
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+                temperature: 0.2,
+                topP: 0.8,
+                topK: 40,
+                maxOutputTokens: 1024,
+            }
         };
 
         try {
