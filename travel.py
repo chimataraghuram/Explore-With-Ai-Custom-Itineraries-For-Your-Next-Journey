@@ -15,7 +15,7 @@ def generate_itinerary(destination, days, nights, month, vibe, budget):
 
   #initialize the generative model
   model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash"
+    model_name="gemini-flash-latest"
   )
 
   # Enhanced AI Travel Planner Prompt - Premium Version
@@ -83,7 +83,7 @@ def generate_travel_content(content_type, destination, extra_info):
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash"
+        model_name="gemini-flash-latest"
     )
 
     prompt = ""
@@ -108,7 +108,7 @@ def generate_packing_checklist(destination, month, days, activities):
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash"
+        model_name="gemini-flash-latest"
     )
 
     prompt = f"""Create a simple and clean packing checklist for a trip to {destination} in {month}.
@@ -145,7 +145,7 @@ def modify_itinerary(current_itinerary, user_request):
     }
 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash"
+        model_name="gemini-flash-latest"
     )
 
     prompt = f"""Modify the following travel itinerary based on the user's specific request.
