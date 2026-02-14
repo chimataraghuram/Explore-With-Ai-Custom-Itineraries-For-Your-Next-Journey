@@ -193,16 +193,38 @@ nav {
 
 .logo {
     font-family: 'Satisfy', cursive;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 400;
     margin: 0;
+    /* Adjusted background to allow for text color fill or separate background */
     background: linear-gradient(90deg, #c2ff4d, #22c55e, #c2ff4d);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     animation: shine 4s linear infinite;
+
+    /* Button Styles */
+    display: inline-block;
+    padding: 8px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.03);
+    /* Subtle glass background */
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.logo:hover {
+    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.08);
+    /* Brighter glass on hover */
+    border-color: rgba(194, 255, 77, 0.5);
+    /* Highlight border */
+    box-shadow: 0 8px 20px rgba(194, 255, 77, 0.15);
 }
 
 @keyframes shine {
