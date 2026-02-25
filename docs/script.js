@@ -49,24 +49,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function callGeminiAPI(prompt) {
-        try {
-            const response = await fetch('/api/generate-raw', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: prompt })
-            });
+        // Detect if we are running locally (on port 8000 or localhost)
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-            if (!response.ok) {
-                const err = await response.json();
-                console.error("Backend Error:", err);
-                throw new Error(err.detail || `API Error: ${response.status} ${response.statusText}`);
+        if (isLocal) {
+            try {
+                const response = await fetch('/api/generate-raw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    console.error("Backend Error:", err);
+                    throw new Error(err.detail || `API Error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data.content;
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
             }
+        } else {
+            // Production / GitHub Pages: Call Gemini API directly
+            // IMPORTANT: For public production, consider a serverless proxy to hide keys
+            const apiKey = "AIzaSyAm1mZUBBw5zec2tAEcaObPW2iziBVM1Pk";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
-            const data = await response.json();
-            return data.content;
-        } catch (error) {
-            console.error("Fetch Error:", error);
-            throw error;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    temperature: 0.4,
+                    topP: 0.9,
+                    topK: 40,
+                    maxOutputTokens: 8192,
+                }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    console.error("Gemini API Error:", err);
+                    throw new Error(err.error?.message || `API Error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                if (!data.candidates || data.candidates.length === 0) {
+                    throw new Error("No content generated. The AI might have been blocked or returned empty.");
+                }
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
         }
     }
 
