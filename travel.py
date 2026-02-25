@@ -168,3 +168,11 @@ Format the response as the updated minimalist itinerary only."""
 
     response = model.generate_content(prompt)
     return response.text
+
+# function to handle raw prompt generations from the frontend
+def generate_raw(prompt):
+    model = genai.GenerativeModel(
+        model_name="gemini-flash-latest"
+    )
+    response = model.generate_content(prompt)
+    return response.text

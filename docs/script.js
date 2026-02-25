@@ -48,44 +48,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Generate Content via Gemini REST API
     async function callGeminiAPI(prompt) {
-        // Forced verified key for guaranteed performance
-        const apiKey = "AIzaSyD4zUodxal4lPfpELIr6GrVfCq3p5EJtvs";
-
-        // Switching to gemini-flash-latest for broader feature support
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
-        const payload = {
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-                temperature: 0.4,
-                topP: 0.9,
-                topK: 40,
-                maxOutputTokens: 8192,
-            }
-        };
-
         try {
-            const response = await fetch(url, {
+            const response = await fetch('/api/generate-raw', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ prompt: prompt })
             });
 
             if (!response.ok) {
                 const err = await response.json();
-                console.error("Gemini API Error:", err);
-                throw new Error(err.error?.message || `API Error: ${response.status} ${response.statusText}`);
+                console.error("Backend Error:", err);
+                throw new Error(err.detail || `API Error: ${response.status} ${response.statusText}`);
             }
 
             const data = await response.json();
-            if (!data.candidates || data.candidates.length === 0) {
-                throw new Error("No content generated. The AI might have been blocked or returned empty.");
-            }
-            return data.candidates[0].content.parts[0].text;
+            return data.content;
         } catch (error) {
             console.error("Fetch Error:", error);
-            throw error; // Re-throw to be caught by the caller
+            throw error;
         }
     }
 

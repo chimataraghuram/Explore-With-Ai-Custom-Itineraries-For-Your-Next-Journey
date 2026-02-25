@@ -8,6 +8,13 @@ import os
 
 app = FastAPI()
 
+from config import api_key
+print(f"--- SERVER STARTING ---")
+if api_key:
+    print(f"API Key loaded: {api_key[:8]}...{api_key[-4:]}")
+else:
+    print("WARNING: No API Key found!")
+
 # Enable CORS for local development
 app.add_middleware(
     CORSMiddleware,
@@ -84,6 +91,18 @@ async def api_modify(request: ModificationRequest):
             user_request=request.user_request
         )
         return {"itinerary": updated_itinerary}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class RawRequest(BaseModel):
+    prompt: str
+
+@app.post("/api/generate-raw")
+async def api_generate_raw(request: RawRequest):
+    try:
+        from travel import generate_raw
+        content = generate_raw(request.prompt)
+        return {"content": content}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

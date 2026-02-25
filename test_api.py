@@ -7,7 +7,7 @@ def test_api():
     print("Testing Gemini API Connection...")
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-flash-latest")
         
         prompt = "Write a one-sentence travel tip for Paris."
         print(f"Sending prompt: '{prompt}'")
@@ -25,8 +25,8 @@ def test_api():
 if __name__ == "__main__":
     success = test_api()
     if success:
-        print("\n✅ API is working correctly!")
+        print("\n[SUCCESS] API is working correctly!")
         sys.exit(0)
     else:
-        print("\n❌ API failed.")
+        print("\n[FAILED] API failed.")
         sys.exit(1)
