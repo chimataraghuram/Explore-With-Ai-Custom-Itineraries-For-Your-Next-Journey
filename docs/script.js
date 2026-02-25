@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tabContents.forEach(c => c.classList.remove('active'));
 
             btn.classList.add('active');
-            document.getElementById(`${tabId}-tab`).classList.add('active');
+            const tabEl = document.getElementById(`${tabId}-tab`);
+            if (tabEl) tabEl.classList.add('active');
 
             // Also update nav links if needed
             document.querySelectorAll('.nav-links a').forEach(a => {
@@ -48,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    async function callGeminiAPI(prompt) {
-        // Detect if we are running locally (on port 8000 or localhost)
+    // Central API Caller (Placeholder initially, will be enhanced)
+    let callGeminiAPI = async function (prompt) {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
         if (isLocal) {
@@ -62,75 +63,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!response.ok) {
                     const err = await response.json();
-                    console.error("Backend Error:", err);
-                    throw new Error(err.detail || `API Error: ${response.status} ${response.statusText}`);
+                    throw new Error(err.detail || `API Error: ${response.status}`);
                 }
 
                 const data = await response.json();
                 return data.content;
             } catch (error) {
-                console.error("Fetch Error:", error);
+                console.error("Local API Error:", error);
                 throw error;
             }
         } else {
-            // Production / GitHub Pages: Call Gemini API directly
-            // IMPORTANT: For public production, consider a serverless proxy to hide keys
-            const apiKey = "AIzaSyAWtg9egrAfAc-3hGHGCNbRQkoqHApVzuI";
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    temperature: 0.4,
-                    topP: 0.9,
-                    topK: 40,
-                    maxOutputTokens: 8192,
-                }
-            };
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    console.error("Gemini API Error:", err);
-                    throw new Error(err.error?.message || `API Error: ${response.status} ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                if (!data.candidates || data.candidates.length === 0) {
-                    throw new Error("No content generated. The AI might have been blocked or returned empty.");
-                }
-                return data.candidates[0].content.parts[0].text;
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                throw error;
-            }
+            // Static Production Fallback (No key by default)
+            throw new Error("API Key required for production. Please use the Connection Settings.");
         }
-    }
+    };
 
     // Handle Hero Search
     const heroSearchBtn = document.getElementById('hero-search-btn');
     if (heroSearchBtn) {
         heroSearchBtn.addEventListener('click', () => {
-            const dest = document.getElementById('hero-dest').value;
-            const vibe = document.getElementById('hero-vibe').value;
-            const when = document.getElementById('hero-when').value;
+            const destEl = document.getElementById('hero-dest');
+            const vibeEl = document.getElementById('hero-vibe');
+            const whenEl = document.getElementById('hero-when');
+
+            if (!destEl || !vibeEl || !whenEl) return;
+
+            const dest = destEl.value;
+            const vibe = vibeEl.value;
+            const when = whenEl.value;
 
             // Scroll to Generator
             const generatorSection = document.getElementById('generator');
-            generatorSection.scrollIntoView({ behavior: 'smooth' });
+            if (generatorSection) generatorSection.scrollIntoView({ behavior: 'smooth' });
 
             // Activate Itinerary Tab
             const itineraryTabBtn = document.querySelector('[data-tab="itinerary"]');
-            itineraryTabBtn.click();
+            if (itineraryTabBtn) itineraryTabBtn.click();
 
             // Pre-fill Form
-            if (dest) document.getElementById('destination').value = dest;
+            const destInput = document.getElementById('destination');
+            if (dest && destInput) destInput.value = dest;
 
             let preferences = [];
             if (vibe) preferences.push(`Travel Style: ${vibe}`);
@@ -138,186 +110,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (preferences.length > 0) {
                 const prefsInput = document.getElementById('preferences');
-                const existingPrefs = prefsInput.value;
-                const newPrefs = preferences.join(', ');
-
-                if (existingPrefs) {
-                    prefsInput.value = `${existingPrefs}, ${newPrefs}`;
-                } else {
-                    prefsInput.value = newPrefs;
+                if (prefsInput) {
+                    const existingPrefs = prefsInput.value;
+                    const newPrefs = preferences.join(', ');
+                    prefsInput.value = existingPrefs ? `${existingPrefs}, ${newPrefs}` : newPrefs;
                 }
             }
         });
     }
 
+    // Generator Forms
+    const setupForm = (form, btnId, promptGen) => {
+        if (!form) return;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById(btnId);
+            const loader = btn.querySelector('.loader');
+            const btnText = btn.querySelector('.btn-text');
 
+            const prompt = promptGen();
+            setLoading(true, btn, loader, btnText);
 
-    // Handle Itinerary Generation
-    itineraryForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('generate-itinerary-btn');
-        const loader = btn.querySelector('.loader');
-        const btnText = btn.querySelector('.btn-text');
+            try {
+                const result = await callGeminiAPI(prompt);
+                showResults(result);
+            } catch (error) {
+                alert('Connection Error: ' + error.message);
+            } finally {
+                setLoading(false, btn, loader, btnText);
+            }
+        });
+    };
 
+    setupForm(itineraryForm, 'generate-itinerary-btn', () => {
         const dest = document.getElementById('destination').value;
         const days = document.getElementById('days').value;
         const nights = document.getElementById('nights').value;
         const prefs = document.getElementById('preferences').value;
-
-        // Enhanced AI Travel Planner Prompt
-        const prompt = `You are TravelGuideAI, a minimalist travel planner.
-
-Create a simple and clean travel itinerary for ${dest}.
-
-Traveler Input:
-- Destination: ${dest}
-- Trip Duration: ${days} days and ${nights} nights
-- Preferences: ${prefs}
-
-INSTRUCTIONS:
-1. Keep the output extremely simple and concise.
-2. Structure the itinerary day-wise (Day 1, Day 2, etc.).
-3. Each day must have slots for: 🌅 Morning, 🍽 Lunch, 🌇 Afternoon, 🌙 Evening.
-4. Use short, punchy bullet points (max 12 words per activity).
-5. **Avoid long paragraphs.** Jump straight to the details.
-6. Include 2 local gems (briefly).
-7. For each place, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME)
-8. End with:
-   - 💰 Budget Range
-   - 🧳 Simple Packing List (bullet points)
-   - 💡 3 Short Tips
-   - 🌐 5 Essential Phrases
-
-Formatting:
-   - Use clear ### headers.
-   - Use bullet points for EVERYTHING.
-   - No filler text or AI jargon.`;
-
-        setLoading(true, btn, loader, btnText);
-
-        try {
-            const result = await callGeminiAPI(prompt);
-            showResults(result);
-        } catch (error) {
-            alert('Error: ' + error.message);
-        } finally {
-            setLoading(false, btn, loader, btnText);
-        }
+        return `Create a cleaning minimalist travel itinerary for ${dest} (${days} days, ${nights} nights). Preferences: ${prefs}. Include Google Maps links: [Place](https://www.google.com/maps/search/?api=1&query=PLACE). Use bullet points.`;
     });
 
-    // Handle Destination Finder
-    if (finderForm) {
-        finderForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('find-destinations-btn');
-            const loader = btn.querySelector('.loader');
-            const btnText = btn.querySelector('.btn-text');
+    setupForm(finderForm, 'find-destinations-btn', () => {
+        const month = document.getElementById('finder-month').value;
+        const style = document.getElementById('finder-style').value;
+        const budget = document.getElementById('finder-budget').value;
+        return `Suggest 5 destinations for ${month} with ${style} style and ${budget} budget. Include Maps links.`;
+    });
 
-            const month = document.getElementById('finder-month').value;
-            const style = document.getElementById('finder-style').value;
-            const budget = document.getElementById('finder-budget').value;
+    setupForm(packingForm, 'generate-packing-btn', () => {
+        const dest = document.getElementById('packing-destination').value;
+        const month = document.getElementById('packing-month').value;
+        const days = document.getElementById('packing-days').value;
+        const activities = document.getElementById('packing-activities').value;
+        return `Packing checklist for ${dest} in ${month} (${days} days). Activities: ${activities}. Use checkboxes [ ].`;
+    });
 
-            if (!month || !style) {
-                alert('Please select both month and travel style.');
-                return;
-            }
-
-            const prompt = `Suggest 5 destinations based on:
-- Travel Month: ${month}
-- Travel Style: ${style}
-- Budget Level: ${budget}
-
-For each, provide a brief bulleted list:
-1. Destination name (with Maps link)
-2. Why it fits (1 sentence)
-3. Highlights (bullet points)
-4. Budget & Weather (short)
-
-Keep it simple, clean, and scannable. Format with Markdown.`;
-
-            setLoading(true, btn, loader, btnText);
-
-            try {
-                const result = await callGeminiAPI(prompt);
-                showResults(result);
-            } catch (error) {
-                alert('Error: ' + error.message);
-            } finally {
-                setLoading(false, btn, loader, btnText);
-            }
-        });
-    }
-
-    // Handle Packing Checklist
-    if (packingForm) {
-        packingForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('generate-packing-btn');
-            const loader = btn.querySelector('.loader');
-            const btnText = btn.querySelector('.btn-text');
-
-            const dest = document.getElementById('packing-destination').value;
-            const month = document.getElementById('packing-month').value;
-            const days = document.getElementById('packing-days').value;
-            const activities = document.getElementById('packing-activities').value;
-
-            const prompt = `Create a simple and scannable packing checklist for ${dest} in ${month}.
-    
-Trip Details:
-- Duration: ${days} days
-- Activities: ${activities}
-
-INSTRUCTIONS:
-- **NO long paragraphs.** Go straight to the lists.
-- Use checkboxes [ ] for every item.
-- Keep descriptions to max 5 words.
-- Use ### headers for categories (Clothing, Essentials, Gadgets, Documents).
-
-Format with clean Markdown.`;
-
-            setLoading(true, btn, loader, btnText);
-
-            try {
-                const result = await callGeminiAPI(prompt);
-                showResults(result);
-            } catch (error) {
-                alert('Error: ' + error.message);
-            } finally {
-                setLoading(false, btn, loader, btnText);
-            }
-        });
-    }
-
-    // Handle Content Generation
-    contentForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('generate-content-btn');
-        const loader = btn.querySelector('.loader');
-        const btnText = btn.querySelector('.btn-text');
-
+    setupForm(contentForm, 'generate-content-btn', () => {
         const type = document.getElementById('content-type').value;
         const dest = document.getElementById('content-destination').value;
         const extra = document.getElementById('content-extra').value;
-
-        const prompt = `Write a simple ${type} for ${dest}. Focus on: ${extra}. Use short paragraphs and bullet points. For each place, include a Google Maps link: [Place Name](https://www.google.com/maps/search/?api=1&query=PLACE_NAME). Keep it minimal and readable.`;
-
-        setLoading(true, btn, loader, btnText);
-
-        try {
-            const result = await callGeminiAPI(prompt);
-            showResults(result);
-        } catch (error) {
-            alert('Error: ' + error.message);
-        } finally {
-            setLoading(false, btn, loader, btnText);
-        }
+        return `Write a ${type} for ${dest}. Focus: ${extra}.`;
     });
 
     // Helper functions
-    let currentItinerary = ''; // Store current itinerary for modifications
-    let currentContext = {}; // Store destination, days, nights, prefs
+    let currentItinerary = '';
 
     function setLoading(isLoading, btn, loader, btnText) {
+        if (!btn || !loader || !btnText) return;
         if (isLoading) {
             btn.disabled = true;
             loader.classList.remove('hidden');
@@ -325,35 +184,29 @@ Format with clean Markdown.`;
         } else {
             btn.disabled = false;
             loader.classList.add('hidden');
-            if (btn.id === 'generate-itinerary-btn') {
-                btnText.textContent = 'Craft My Adventure';
-            } else if (btn.id === 'find-destinations-btn') {
-                btnText.textContent = 'Find Perfect Destinations';
-            } else if (btn.id === 'modify-btn') {
-                btnText.textContent = 'Apply Changes';
-            } else if (btn.id === 'generate-packing-btn') {
-                btnText.textContent = 'Generate Checklist';
-            } else {
-                btnText.textContent = 'Generate Intelligence';
-            }
+            const originalTexts = {
+                'generate-itinerary-btn': 'Craft My Adventure',
+                'find-destinations-btn': 'Find Perfect Destinations',
+                'modify-btn': 'Apply Changes',
+                'generate-packing-btn': 'Generate Checklist',
+                'generate-content-btn': 'Generate Intelligence'
+            };
+            btnText.textContent = originalTexts[btn.id] || 'Generate';
         }
     }
 
     function showResults(content) {
-        currentItinerary = content; // Store for modifications
-        resultsContent.innerHTML = marked.parse(content);
-        resultsSection.classList.remove('hidden');
-
-        // Show modification panel
-        const modPanel = document.getElementById('modification-panel');
-        if (modPanel) {
-            modPanel.style.display = 'block';
+        currentItinerary = content;
+        if (resultsContent) resultsContent.innerHTML = marked.parse(content);
+        if (resultsSection) {
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
         }
-
-        resultsSection.scrollIntoView({ behavior: 'smooth' });
+        const modPanel = document.getElementById('modification-panel');
+        if (modPanel) modPanel.style.display = 'block';
     }
 
-    // Handle Modification Requests
+    // Modification Form
     const modificationForm = document.getElementById('modification-form');
     if (modificationForm) {
         modificationForm.addEventListener('submit', async (e) => {
@@ -363,326 +216,144 @@ Format with clean Markdown.`;
             const btnText = btn.querySelector('.btn-text');
             const userRequest = document.getElementById('modification-input').value;
 
-            if (!userRequest.trim()) {
-                alert('Please enter a modification request.');
-                return;
-            }
+            if (!userRequest.trim() || !currentItinerary) return;
 
-            if (!currentItinerary) {
-                alert('Please generate an itinerary first.');
-                return;
-            }
-
-            // Modification prompt
-            const modPrompt = `Modify the existing itinerary based on this request: "${userRequest}".
-
-Current Itinerary:
-${currentItinerary}
-
-STRICT INSTRUCTIONS:
-1. Keep the output extremely simple and concise.
-2. Only adjust relevant parts.
-3. Use bullet points for all activities.
-4. Avoid any long paragraphs. 
-5. Format with simple Markdown.`;
-
+            const modPrompt = `Modify this itinerary: "${userRequest}".\n\nOriginal:\n${currentItinerary}`;
             setLoading(true, btn, loader, btnText);
-
             try {
                 const result = await callGeminiAPI(modPrompt);
                 showResults(result);
-                document.getElementById('modification-input').value = ''; // Clear input
+                document.getElementById('modification-input').value = '';
             } catch (error) {
-                alert('Error: ' + error.message);
+                alert('Mod error: ' + error.message);
             } finally {
                 setLoading(false, btn, loader, btnText);
             }
         });
     }
 
-    // Copy to clipboard
-    copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(resultsContent.textContent).then(() => {
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => copyBtn.textContent = originalText, 2000);
+    // UI/UX Effects
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(resultsContent.textContent).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = originalText, 2000);
+            });
         });
-    });
+    }
 
-    // Scroll Reveal Animation
-    const revealElements = document.querySelectorAll('.reveal');
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('active');
         });
     }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-    revealElements.forEach(el => revealObserver.observe(el));
-
-    // Hero Scroll Effect
-    const bgLayers = [
-        document.querySelector('.layer-1'),
-        document.querySelector('.layer-2'),
-        document.querySelector('.layer-3'),
-        document.querySelector('.layer-4')
-    ];
-    const heroText = document.querySelector('.hero h1');
-    const heroP = document.querySelector('.hero p');
-
+    // Hero Parallax
     window.addEventListener('scroll', () => {
         const scroll = window.pageYOffset;
-        const windowHeight = window.innerHeight;
-        const totalHeight = document.documentElement.scrollHeight - windowHeight;
-        const progress = scroll / totalHeight;
-
-        // Global Scale effect (1.1 to 0.85)
+        const progress = scroll / (document.documentElement.scrollHeight - window.innerHeight);
         const scale = 1.1 - (progress * 0.25);
+        const heroText = document.querySelector('.hero h1');
+        const heroP = document.querySelector('.hero p');
+        if (heroText) heroText.style.opacity = Math.max(0, 1 - (scroll / 400));
+        if (heroP) heroP.style.opacity = Math.max(0, 1 - (scroll / 400));
 
-        // Hero Content Fade
-        const heroOpacity = Math.max(0, 1 - (scroll / (windowHeight * 0.5)));
-        if (heroText) heroText.style.opacity = heroOpacity;
-        if (heroP) heroP.style.opacity = heroOpacity;
-
-        // Background Layer Transitions
-        bgLayers.forEach((layer, index) => {
-            if (!layer) return;
-
-            const parallaxShift = progress * -100;
-            layer.style.transform = `scale(${scale}) translateY(${parallaxShift}px)`;
-
-            if (index === 0) {
-                layer.style.opacity = 1;
-            } else {
+        document.querySelectorAll('.hero-bg').forEach((layer, index) => {
+            const shift = progress * -100;
+            layer.style.transform = `scale(${scale}) translateY(${shift}px)`;
+            if (index > 0) {
                 const start = (index - 1) * 0.3 + 0.1;
-                const end = start + 0.3;
+                layer.style.opacity = progress > start ? Math.min(1, (progress - start) / 0.3) : 0;
+            }
+        });
+    });
 
-                let layerOpacity = 0;
-                if (progress > start) {
-                    layerOpacity = Math.min(1, (progress - start) / (end - start));
+    // ===== NEURAL CONNECTION (API KEY MODAL) =====
+    const connectionBadge = document.getElementById('connection-badge');
+    const apiModal = document.getElementById('api-modal');
+    const closeApiModal = document.getElementById('close-api-modal');
+    const saveApiKeyBtn = document.getElementById('save-api-key');
+    const clearApiKeyBtn = document.getElementById('clear-api-key');
+    const userApiKeyInput = document.getElementById('user-api-key');
+    const statusDot = connectionBadge ? connectionBadge.querySelector('.status-dot') : null;
+
+    const updateStatusUI = () => {
+        if (!statusDot) return;
+        const key = localStorage.getItem('GEMINI_API_KEY');
+        statusDot.classList.toggle('active', !!key);
+        statusDot.classList.remove('error');
+    };
+
+    if (connectionBadge) {
+        connectionBadge.addEventListener('click', () => apiModal.classList.remove('hidden'));
+    }
+    if (closeApiModal) {
+        closeApiModal.addEventListener('click', () => apiModal.classList.add('hidden'));
+    }
+
+    if (saveApiKeyBtn) {
+        saveApiKeyBtn.addEventListener('click', () => {
+            const key = userApiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('GEMINI_API_KEY', key);
+                updateStatusUI();
+                apiModal.classList.add('hidden');
+                alert('Secure Neural Connection Established.');
+            }
+        });
+    }
+
+    if (clearApiKeyBtn) {
+        clearApiKeyBtn.addEventListener('click', () => {
+            localStorage.removeItem('GEMINI_API_KEY');
+            userApiKeyInput.value = '';
+            updateStatusUI();
+            alert('Neural Connection Reset.');
+        });
+    }
+
+    // Wrap the original API caller with local storage key logic
+    const baseCaller = callGeminiAPI;
+    callGeminiAPI = async (prompt) => {
+        const userKey = localStorage.getItem('GEMINI_API_KEY');
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+        if (!isLocal && userKey) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${userKey}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        if (statusDot) statusDot.classList.add('error');
+                        apiModal.classList.remove('hidden');
+                    }
+                    throw new Error(`API Error: ${response.status}`);
                 }
-                layer.style.opacity = layerOpacity;
-            }
-        });
-    });
-
-    // ===== ENHANCED ANIMATIONS =====
-
-    // Parallax Mouse Movement on Cards (Desktop Only)
-    const cards = document.querySelectorAll('.dest-card, .scenario-card, .glass-panel:not(.generator-section)');
-    if (window.innerWidth > 768) {
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-
-                const rotateX = (y - centerY) / 20;
-                const rotateY = (centerX - x) / 20;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-            });
-        });
-    }
-
-    // Button Ripple Effect
-    const buttons = document.querySelectorAll('.primary-btn, .search-btn, .tab-btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', function (e) {
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.classList.add('ripple');
-
-            this.appendChild(ripple);
-
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-    });
-
-    // Add ripple styles dynamically
-    const style = document.createElement('style');
-    style.textContent = `
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(0);
-            animation: ripple-animation 0.6s ease-out;
-            pointer-events: none;
-        }
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (e) {
+                console.error("Neural Error:", e);
+                throw e;
             }
         }
-    `;
-    document.head.appendChild(style);
+        return baseCaller(prompt);
+    };
 
-    // Smooth Fade-in for Result Content
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'childList' && mutation.target === resultsContent) {
-                resultsContent.style.opacity = '0';
-                setTimeout(() => {
-                    resultsContent.style.transition = 'opacity 0.5s ease';
-                    resultsContent.style.opacity = '1';
-                }, 50);
-            }
-        });
-    });
+    updateStatusUI();
 
-    observer.observe(resultsContent, { childList: true });
-
-    // Stagger Animation for Destination Cards
-    const destCards = document.querySelectorAll('.dest-card');
-    destCards.forEach((card, index) => {
-        card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
-    });
-
-    // Input Focus Animation
-    const inputs = document.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function () {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 0 15px rgba(194, 255, 77, 0.3)';
-        });
-
-        input.addEventListener('blur', function () {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '';
-        });
-    });
-
-    // Loading Spinner for Generate Buttons
-    function createLoadingSpinner() {
-        const spinner = document.createElement('div');
-        spinner.className = 'loading-spinner';
-        return spinner;
-    }
-
-    // Smooth scroll for navigation links
+    // Smooth scroll for nav
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
         });
-
-        // ===== CONNECTION & MODAL HANDLING =====
-        const connectionBadge = document.getElementById('connection-badge');
-        const apiModal = document.getElementById('api-modal');
-        const closeApiModal = document.getElementById('close-api-modal');
-        const saveApiKeyBtn = document.getElementById('save-api-key');
-        const clearApiKeyBtn = document.getElementById('clear-api-key');
-        const userApiKeyInput = document.getElementById('user-api-key');
-        const statusDot = connectionBadge.querySelector('.status-dot');
-
-        // Load saved key from localStorage
-        const savedKey = localStorage.getItem('GEMINI_API_KEY');
-        if (savedKey) {
-            userApiKeyInput.value = savedKey;
-            statusDot.classList.add('active');
-        }
-
-        connectionBadge.addEventListener('click', () => {
-            apiModal.classList.remove('hidden');
-        });
-
-        closeApiModal.addEventListener('click', () => {
-            apiModal.classList.add('hidden');
-        });
-
-        saveApiKeyBtn.addEventListener('click', () => {
-            const newKey = userApiKeyInput.value.trim();
-            if (newKey) {
-                localStorage.setItem('GEMINI_API_KEY', newKey);
-                statusDot.classList.remove('error');
-                statusDot.classList.add('active');
-                apiModal.classList.add('hidden');
-                alert('Security connection established locally.');
-            }
-        });
-
-        clearApiKeyBtn.addEventListener('click', () => {
-            localStorage.removeItem('GEMINI_API_KEY');
-            userApiKeyInput.value = '';
-            statusDot.classList.remove('active', 'error');
-            alert('Local connection reset.');
-        });
-
-        // Modified callGeminiAPI to use local storage key if available
-        const originalCallGeminiAPI = callGeminiAPI;
-        callGeminiAPI = async (prompt) => {
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const userKey = localStorage.getItem('GEMINI_API_KEY');
-
-            if (!isLocal && userKey) {
-                // User provided key - use it instead of public one
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${userKey}`;
-                const payload = {
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.4, topP: 0.9, topK: 40, maxOutputTokens: 8192 }
-                };
-
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const err = await response.json();
-                        if (response.status === 403 || response.status === 401) {
-                            statusDot.classList.add('error');
-                            apiModal.classList.remove('hidden');
-                        }
-                        throw new Error(err.error?.message || `API Error: ${response.status}`);
-                    }
-
-                    statusDot.classList.add('active');
-                    const data = await response.json();
-                    return data.candidates[0].content.parts[0].text;
-                } catch (error) {
-                    console.error("Custom Key Error:", error);
-                    throw error;
-                }
-            } else {
-                // Fallback to existing logic
-                try {
-                    const result = await originalCallGeminiAPI(prompt);
-                    statusDot.classList.add('active');
-                    return result;
-                } catch (error) {
-                    if (error.message.includes('403') || error.message.includes('401') || error.message.includes('key')) {
-                        statusDot.classList.add('error');
-                        if (!isLocal) apiModal.classList.remove('hidden');
-                    }
-                    throw error;
-                }
-            }
-        };
     });
+});
