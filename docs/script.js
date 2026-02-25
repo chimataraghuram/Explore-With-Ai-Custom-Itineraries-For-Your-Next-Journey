@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Production / GitHub Pages: Call Gemini API directly
             // IMPORTANT: For public production, consider a serverless proxy to hide keys
-            const apiKey = "AIzaSyAm1mZUBBw5zec2tAEcaObPW2iziBVM1Pk";
+            const apiKey = "AIzaSyAWtg9egrAfAc-3hGHGCNbRQkoqHApVzuI";
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
             const payload = {
@@ -590,5 +590,99 @@ STRICT INSTRUCTIONS:
                 });
             }
         });
+
+        // ===== CONNECTION & MODAL HANDLING =====
+        const connectionBadge = document.getElementById('connection-badge');
+        const apiModal = document.getElementById('api-modal');
+        const closeApiModal = document.getElementById('close-api-modal');
+        const saveApiKeyBtn = document.getElementById('save-api-key');
+        const clearApiKeyBtn = document.getElementById('clear-api-key');
+        const userApiKeyInput = document.getElementById('user-api-key');
+        const statusDot = connectionBadge.querySelector('.status-dot');
+
+        // Load saved key from localStorage
+        const savedKey = localStorage.getItem('GEMINI_API_KEY');
+        if (savedKey) {
+            userApiKeyInput.value = savedKey;
+            statusDot.classList.add('active');
+        }
+
+        connectionBadge.addEventListener('click', () => {
+            apiModal.classList.remove('hidden');
+        });
+
+        closeApiModal.addEventListener('click', () => {
+            apiModal.classList.add('hidden');
+        });
+
+        saveApiKeyBtn.addEventListener('click', () => {
+            const newKey = userApiKeyInput.value.trim();
+            if (newKey) {
+                localStorage.setItem('GEMINI_API_KEY', newKey);
+                statusDot.classList.remove('error');
+                statusDot.classList.add('active');
+                apiModal.classList.add('hidden');
+                alert('Security connection established locally.');
+            }
+        });
+
+        clearApiKeyBtn.addEventListener('click', () => {
+            localStorage.removeItem('GEMINI_API_KEY');
+            userApiKeyInput.value = '';
+            statusDot.classList.remove('active', 'error');
+            alert('Local connection reset.');
+        });
+
+        // Modified callGeminiAPI to use local storage key if available
+        const originalCallGeminiAPI = callGeminiAPI;
+        callGeminiAPI = async (prompt) => {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const userKey = localStorage.getItem('GEMINI_API_KEY');
+
+            if (!isLocal && userKey) {
+                // User provided key - use it instead of public one
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${userKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.4, topP: 0.9, topK: 40, maxOutputTokens: 8192 }
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const err = await response.json();
+                        if (response.status === 403 || response.status === 401) {
+                            statusDot.classList.add('error');
+                            apiModal.classList.remove('hidden');
+                        }
+                        throw new Error(err.error?.message || `API Error: ${response.status}`);
+                    }
+
+                    statusDot.classList.add('active');
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    console.error("Custom Key Error:", error);
+                    throw error;
+                }
+            } else {
+                // Fallback to existing logic
+                try {
+                    const result = await originalCallGeminiAPI(prompt);
+                    statusDot.classList.add('active');
+                    return result;
+                } catch (error) {
+                    if (error.message.includes('403') || error.message.includes('401') || error.message.includes('key')) {
+                        statusDot.classList.add('error');
+                        if (!isLocal) apiModal.classList.remove('hidden');
+                    }
+                    throw error;
+                }
+            }
+        };
     });
-});

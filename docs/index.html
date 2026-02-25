@@ -67,6 +67,9 @@
         <div class="nav-search">
             <input type="text" placeholder="Search...">
         </div>
+        <div class="connection-status" id="connection-badge" title="API Status">
+            <span class="status-dot"></span>
+        </div>
     </nav>
 
     <div class="hero">
@@ -484,6 +487,29 @@
             <p>&copy; 2026 <strong>TravelGuideAI</strong>. Cooked By Raghu With ❤️</p>
         </div>
     </footer>
+
+    <!-- API Key Modal -->
+    <div id="api-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>Neural Connection Settings</h3>
+                <button class="close-modal" id="close-api-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>The shared API key may have reached its limit or been disabled. For uninterrupted service, please
+                    provide your own <strong>Google Gemini API Key</strong>.</p>
+                <div class="search-field" style="margin-top: 20px;">
+                    <label>Gemini API Key</label>
+                    <input type="password" id="user-api-key" placeholder="AIzaSy...">
+                </div>
+                <p class="crypto-note">Your key is stored locally in your browser and never sent to our servers.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="nav-cta" id="save-api-key">Secure Connection</button>
+                <button class="tab-btn" id="clear-api-key" style="margin-top: 0; border-radius: 50px;">Reset</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js?v=SEARCH_FIX_106"></script>
