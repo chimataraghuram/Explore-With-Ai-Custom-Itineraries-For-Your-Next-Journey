@@ -104,7 +104,11 @@ async def api_generate_raw(request: RawRequest):
         content = generate_raw(request.prompt)
         return {"content": content}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        error_msg = str(e)
+        if "SYSTEM_ERROR" in error_msg:
+             # This is our custom error from travel.py
+             raise HTTPException(status_code=403, detail=error_msg.replace("SYSTEM_ERROR: ", ""))
+        raise HTTPException(status_code=500, detail=error_msg)
 
 # Serve static files from the 'docs' directory
 if os.path.exists("docs"):

@@ -135,7 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await callGeminiAPI(prompt);
                 showResults(result);
             } catch (error) {
-                alert('Connection Error: ' + error.message);
+                console.error("Task Error:", error);
+                alert('Neural Connection Error:\n\n' + error.message);
+                if (error.message.includes('API key')) {
+                    const apiModal = document.getElementById('api-modal');
+                    if (apiModal) apiModal.classList.remove('hidden');
+                }
             } finally {
                 setLoading(false, btn, loader, btnText);
             }
@@ -320,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userKey = localStorage.getItem('GEMINI_API_KEY');
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-        if (!isLocal && userKey) {
+        if (userKey && userKey.trim() !== '' && userKey !== 'null') {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${userKey}`;
             try {
                 const response = await fetch(url, {
@@ -330,11 +335,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (!response.ok) {
-                    if (response.status === 403) {
+                    let errorMessage = `API Error: ${response.status}`;
+                    try {
+                        const errData = await response.json();
+                        if (errData.error && errData.error.message) {
+                            errorMessage = errData.error.message;
+                        }
+                    } catch (e) { }
+
+                    if (response.status === 403 || response.status === 400) {
                         if (statusDot) statusDot.classList.add('error');
-                        apiModal.classList.remove('hidden');
+                        // If the key is invalid, we should probably warn them or clear it
+                        console.warn("API Key issue detected. Consider clearing your settings.");
                     }
-                    throw new Error(`API Error: ${response.status}`);
+                    throw new Error(errorMessage);
                 }
                 const data = await response.json();
                 return data.candidates[0].content.parts[0].text;

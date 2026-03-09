@@ -31,6 +31,16 @@ st.markdown("""
 st.title("✈️ TravelGuideAI")
 st.subheader("Your Ultimate AI-Powered Travel Assistant")
 
+# Sidebar for API Configuration
+with st.sidebar:
+    st.header("🔑 Connection Settings")
+    user_key = st.text_input("Google Gemini API Key", type="password", help="If the default key is blocked or you want to use your own.")
+    if user_key:
+        from travel import reconfigure_api
+        reconfigure_api(user_key)
+        st.success("Custom API Key Applied!")
+    st.info("Get a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey)")
+
 # Create tabs for different functionalities
 tab1, tab2, tab3 = st.tabs(["🗺️ Custom Itinerary", "✍️ Blog & Content", "🎒 Packing Assistant"])
 

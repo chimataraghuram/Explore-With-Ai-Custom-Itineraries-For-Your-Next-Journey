@@ -1,7 +1,13 @@
 import google.generativeai as genai
 from config import api_key
 
-genai.configure(api_key = api_key)
+# Default configuration
+if api_key:
+    genai.configure(api_key = api_key)
+
+def reconfigure_api(new_key):
+    if new_key:
+        genai.configure(api_key = new_key)
 
 #function to generate travel itinerary based on user input
 def generate_itinerary(destination, days, nights, month, vibe, budget):
@@ -174,5 +180,10 @@ def generate_raw(prompt):
     model = genai.GenerativeModel(
         model_name="gemini-flash-latest"
     )
-    response = model.generate_content(prompt)
-    return response.text
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        if "leaked" in str(e).lower():
+            raise Exception("SYSTEM_ERROR: The backend API key has been disabled for safety. Please use the 'Connection' settings in the UI to provide your own Google Gemini API key.")
+        raise e

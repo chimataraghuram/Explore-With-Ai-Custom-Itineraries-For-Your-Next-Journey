@@ -675,6 +675,15 @@ main {
     border-color: transparent;
 }
 
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: scaleIn 0.5s ease-out;
+}
+
 .card {
     padding: 50px;
     max-width: 900px;
@@ -1500,7 +1509,8 @@ html {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #64748b; /* Gray - checking */
+    background: #64748b;
+    /* Gray - checking */
     box-shadow: 0 0 10px rgba(100, 116, 139, 0.3);
 }
 
@@ -1516,9 +1526,20 @@ html {
 }
 
 @keyframes pulse-glow {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* Modal Utility */
